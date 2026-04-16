@@ -205,6 +205,10 @@ db.exec(`
   );
 `);
 
+// Column migrations (safe to run on every startup)
+try { db.exec("ALTER TABLE exchanges ADD COLUMN action_type TEXT DEFAULT 'exchange'"); } catch(e) {}
+try { db.exec("ALTER TABLE exchanges ADD COLUMN remarks TEXT DEFAULT ''"); } catch(e) {}
+
 // Seed admin user
 const uc = db.prepare('SELECT COUNT(*) as c FROM users').get();
 if (uc.c === 0) {
@@ -459,8 +463,8 @@ app.get('/api/orders/list', auth, async (req, res) => {
     const to = req.query.to || '';
     // Use limit=250 (Shopify max per page) + cursor pagination to get ALL orders in range
     let qs = `limit=250&status=any`;
-    if (from) qs += `&created_at_min=${from}T00:00:00`;
-    if (to) qs += `&created_at_max=${to}T23:59:59`;
+    if (from) qs += `&created_at_min=${from}T00:00:00+05:30`;
+    if (to) qs += `&created_at_max=${to}T23:59:59+05:30`;
     const data = await shopifyFetchAll(`orders.json?${qs}`);
     let orders = data.orders || [];
 
@@ -513,10 +517,13 @@ app.get('/api/orders/list', auth, async (req, res) => {
       const isCOD = (o.payment_gateway_names||[]).some(p=>p.toLowerCase().includes('cod'))||(o.payment_gateway||'').toLowerCase().includes('cod');
       const cached = awb ? statusMap[awb] : null;
       const ndr = awb ? ndrMap[awb] : null;
+      const isCancelled = !!o.cancelled_at;
 
       // FIX 3: Better delivery status - use Velocity cache first, then Shopify's own shipment_status
       let delivery = 'pending';
-      if (cached && cached.status) {
+      if (isCancelled) {
+        delivery = 'cancelled';
+      } else if (cached && cached.status) {
         // Velocity data takes priority
         delivery = cached.status;
       } else if (ndr && !ndr.resolved) {
@@ -531,8 +538,8 @@ app.get('/api/orders/list', auth, async (req, res) => {
       } else if (o.fulfillment_status === 'partial') {
         delivery = 'partial';
       }
-      // Still apply NDR from our log even if we have Velocity status
-      if (ndr && !ndr.resolved && delivery !== 'delivered') delivery = 'ndr';
+      // Still apply NDR from our log even if we have Velocity status (but not for cancelled orders)
+      if (!isCancelled && ndr && !ndr.resolved && delivery !== 'delivered') delivery = 'ndr';
 
       // Channel: pos, web, draft etc.
       const src = (o.source_name||'web').toLowerCase();
@@ -540,6 +547,20 @@ app.get('/api/orders/list', auth, async (req, res) => {
 
       // Courier partner from fulfillments
       const courier = [...new Set((o.fulfillments||[]).map(f=>f.tracking_company).filter(Boolean))].join(', ');
+
+      // Payment mode from gateway (Cash, UPI, Razorpay, Card, etc.)
+      const gw = ((o.payment_gateway_names||[])[0] || o.payment_gateway || '').toLowerCase().replace(/_/g,' ');
+      const payment_mode = gw.includes('cash') && !gw.includes('cod') ? 'Cash'
+        : gw.includes('upi') ? 'UPI'
+        : gw.includes('razorpay') ? 'Razorpay'
+        : gw.includes('paytm') ? 'Paytm'
+        : gw.includes('phonepe') ? 'PhonePe'
+        : gw.includes('gpay') || gw.includes('google pay') ? 'Google Pay'
+        : gw.includes('card') || gw.includes('stripe') ? 'Card'
+        : gw.includes('bank') || gw.includes('neft') || gw.includes('imps') ? 'Bank Transfer'
+        : gw.includes('cod') ? 'COD'
+        : gw.includes('wallet') ? 'Wallet'
+        : gw ? gw.replace(/\b\w/g, c => c.toUpperCase()) : '';
 
       // FIX 1 + IMAGE FIX: Line items with name + SKU + quantity + cached image
       const line_items = (o.line_items||[]).map(i => ({
@@ -555,8 +576,11 @@ app.get('/api/orders/list', auth, async (req, res) => {
 
       // FIX 2: Payment type & correct paid/balance amounts
       const totalPrice = parseFloat(o.total_price||0);
-      const isPartialCOD = isCOD && o.financial_status === 'partially_paid';
-      let paymentType = isCOD ? (isPartialCOD ? 'Partial COD' : 'COD') : 'Prepaid';
+      const isPOS = orderChannel === 'pos';
+      const isPartialCOD = (isCOD || isPOS) && o.financial_status === 'partially_paid';
+      let paymentType = (isCOD || (isPOS && o.financial_status !== 'paid'))
+        ? (isPartialCOD ? 'Partial COD' : 'COD')
+        : 'Prepaid';
       let paid_amount = 0, balance_amount = 0;
 
       if (o.financial_status === 'refunded') {
@@ -637,6 +661,8 @@ app.get('/api/orders/list', auth, async (req, res) => {
         courier,
         channel: orderChannel,
         package_weight, pkg_summary,
+        payment_mode,
+        cancelled: isCancelled,
       };
     });
 
@@ -985,8 +1011,8 @@ app.get('/api/exchanges', auth, (req, res) => {
 app.post('/api/exchanges', auth, (req, res) => {
   try {
     const d = req.body;
-    const info = db.prepare('INSERT INTO exchanges (order_id,order_number,customer_name,customer_phone,reason,original_item,original_size,exchange_item,exchange_size,priority,notes) VALUES (?,?,?,?,?,?,?,?,?,?,?)').run(
-      d.order_id||'',d.order_number||'',d.customer_name,d.customer_phone||'',d.reason||'',d.original_item||'',d.original_size||'',d.exchange_item||'',d.exchange_size||'',d.priority||'normal',d.notes||''
+    const info = db.prepare('INSERT INTO exchanges (order_id,order_number,customer_name,customer_phone,reason,original_item,original_size,exchange_item,exchange_size,priority,notes,action_type,remarks) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)').run(
+      d.order_id||'',d.order_number||'',d.customer_name||'',d.customer_phone||'',d.reason||'',d.original_item||'',d.original_size||'',d.exchange_item||'',d.exchange_size||'',d.priority||'normal',d.notes||'',d.action_type||'exchange',d.remarks||''
     );
     res.json({ id:info.lastInsertRowid });
   } catch(e) { res.status(500).json({ error: e.message }); }
@@ -1104,17 +1130,44 @@ app.post('/api/orders/:order_id/notes', auth, (req, res) => {
 app.get('/api/export/orders', auth, async (req, res) => {
   try {
     const { from, to } = req.query;
-    const data = await shopifyFetch(`orders.json?limit=250&status=any&created_at_min=${from}T00:00:00&created_at_max=${to}T23:59:59`);
+    let qs = `limit=250&status=any`;
+    if (from) qs += `&created_at_min=${from}T00:00:00+05:30`;
+    if (to) qs += `&created_at_max=${to}T23:59:59+05:30`;
+    const data = await shopifyFetchAll(`orders.json?${qs}`);
     const orders = data.orders || [];
-    let csv = 'Order#,Date,Customer,Phone,Items,Amount,Payment,Fulfillment,AWB\n';
+    const esc = v => '"' + String(v||'').replace(/"/g,'""') + '"';
+    const headers = ['Order#','Date','Customer','Phone','City','State','Pincode','Items','SKUs','Qty','Amount','Paid','Balance','Payment','Payment Mode','Financial Status','Delivery Status','AWB','Courier','Channel','Notes'];
+    const rows = [headers.map(esc).join(',')];
     orders.forEach(o => {
       const items = (o.line_items||[]).map(i => `${i.name} x${i.quantity}`).join('; ');
+      const skus = (o.line_items||[]).map(i => i.sku||'').filter(Boolean).join('; ');
+      const qty = (o.line_items||[]).reduce((s,i)=>s+(i.quantity||1),0);
       const awb = (o.fulfillments||[]).flatMap(f => f.tracking_numbers||[]).join('; ');
-      csv += `"${o.name}","${o.created_at?.substring(0,10)}","${o.billing_address?.name||''}","${o.billing_address?.phone||''}","${items}",${o.total_price},"${o.financial_status}","${o.fulfillment_status||'unfulfilled'}","${awb}"\n`;
+      const courier = [...new Set((o.fulfillments||[]).map(f=>f.tracking_company).filter(Boolean))].join(', ');
+      const isCOD = (o.payment_gateway_names||[]).some(p=>p.toLowerCase().includes('cod'))||(o.payment_gateway||'').toLowerCase().includes('cod');
+      const src = (o.source_name||'web').toLowerCase();
+      const channel = src === 'pos' ? 'POS' : 'Web';
+      const totalPrice = parseFloat(o.total_price||0);
+      const paidAmt = o.financial_status === 'paid' ? totalPrice : o.financial_status === 'partially_paid' ? parseFloat(o.subtotal_price||0) : 0;
+      const balAmt = Math.max(0, totalPrice - paidAmt);
+      const gw = ((o.payment_gateway_names||[])[0] || o.payment_gateway || '').toLowerCase();
+      const payment_mode = gw.includes('upi') ? 'UPI' : gw.includes('razorpay') ? 'Razorpay' : gw.includes('paytm') ? 'Paytm' : gw.includes('cash')&&!gw.includes('cod') ? 'Cash' : gw.includes('card') ? 'Card' : gw ? gw.replace(/\b\w/g,c=>c.toUpperCase()) : '';
+      const isCancelled = !!o.cancelled_at;
+      const deliveryStatus = isCancelled ? 'Cancelled' : o.fulfillment_status === 'fulfilled' ? 'Fulfilled' : o.fulfillment_status || 'Unfulfilled';
+      const payment = isCOD ? (o.financial_status === 'partially_paid' ? 'Partial COD' : 'COD') : 'Prepaid';
+      rows.push([
+        esc(o.name), esc((o.created_at||'').substring(0,10)),
+        esc(o.billing_address?.name||o.customer?.first_name||''), esc(o.billing_address?.phone||o.customer?.phone||''),
+        esc(o.shipping_address?.city||''), esc(o.shipping_address?.province||''), esc(o.shipping_address?.zip||''),
+        esc(items), esc(skus), qty,
+        totalPrice.toFixed(2), paidAmt.toFixed(2), balAmt.toFixed(2),
+        esc(payment), esc(payment_mode), esc(o.financial_status||''),
+        esc(deliveryStatus), esc(awb), esc(courier), esc(channel), esc(o.note||'')
+      ].join(','));
     });
     res.setHeader('Content-Type','text/csv');
-    res.setHeader('Content-Disposition',`attachment; filename=orders_${from}_${to}.csv`);
-    res.send(csv);
+    res.setHeader('Content-Disposition',`attachment; filename=orders_${from||'all'}_${to||'all'}.csv`);
+    res.send(rows.join('\n'));
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
