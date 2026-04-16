@@ -114,9 +114,21 @@ tfoot td{border-top:2px solid #2a2a45;background:#1a1a35;font-weight:700;padding
 /* ITEM BLOCK */
 .item-block{font-size:12px;line-height:1.5;margin-bottom:2px}
 .item-sku{font-size:10px;color:#666;margin-left:4px}
+/* CANCELLED */
+.ds-cancelled{background:rgba(156,163,175,.15);color:#9ca3af}
+.chip-btn.ds-cancelled{color:#9ca3af;border-color:rgba(156,163,175,.4)}
+.chip-btn.ds-cancelled.active{background:rgba(156,163,175,.2);border-color:#9ca3af}
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;align-items:center;justify-content:center}
+.modal-box{background:#16162a;border:1px solid #2a2a45;border-radius:12px;padding:24px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto}
+.modal-field{margin-bottom:12px}
+.modal-field label{display:block;mfont-size:11px;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.modal-field input,.modal-field select,.modal-field textarea{width:100%;padding:9px 12px;background:#0f0f1a;border:1px solid #2a2a45;border-radius:7px;color:#f0f0f5;font-size:13px;outline:none}
+.modal-field textarea{resize:vertical}
+.modal-2col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 /* MOBILE */
 @media(max-width:768px){.sidebar{display:none}.main{width:100%}}
-</style>
+</tyle>
 </head>
 <body>
 
@@ -201,6 +213,7 @@ tfoot td{border-top:2px solid #2a2a45;background:#1a1a35;font-weight:700;padding
           <button class="chip-btn ds-delivered" onclick="toggleDeliveryChip('delivered',this)">✓ Delivered</button>
           <button class="chip-btn ds-ndr" onclick="toggleDeliveryChip('ndr',this)">NDR</button>
           <button class="chip-btn ds-rto" onclick="toggleDeliveryChip('rto',this)">RTO</button>
+          <button class="chip-btn ds-cancelled" onclick="toggleDeliveryChip('cancelled',this)">Cancelled</button>
         </div>
       </div>
       <!-- Date + Search -->
@@ -213,12 +226,12 @@ tfoot td{border-top:2px solid #2a2a45;background:#1a1a35;font-weight:700;padding
       </div>
       <!-- Table -->
       <div class="table-wrap" style="overflow-x:auto">
-        <table style="min-width:1200px"><thead><tr>
+        <table style="min-width:1300px"><thead><tr>
           <th>Order #</th><th>Date</th><th>Customer</th><th>Phone</th><th>City</th>
           <th>Items & SKU</th><th>Amount</th><th>Paid</th><th>Balance</th>
-          <th>Payment</th><th>Delivery</th><th>Courier</th><th>Package</th><th>AWB</th><th>Channel</th>
+          <th>Payment</th><th>Mode</th><th>Delivery</th><th>Courier</th><th>Package</th><th>AWB</th><th>Channel</th><th>Actions</th>
         </tr></thead>
-        <tbody id="orders-tbody"><tr><td colspan="15" class="loading">Loading orders...</td></tr></tbody>
+        <tbody id="orders-tbody"><tr><td colspan="17" class="loading">Loading orders...</td></tr></tbody>
         <tfoot id="orders-tfoot"></tfoot>
         </table>
       </div>
@@ -292,10 +305,10 @@ tfoot td{border-top:2px solid #2a2a45;background:#1a1a35;font-weight:700;padding
     </div>
     <!-- EXCHANGES -->
     <div class="screen" id="screen-exchanges">
-      <div class="page-title">Exchanges <button class="btn-sm" onclick="openExchangeModal()">+ New Exchange</button></div>
+      <div class="page-title">Order Actions <span style="font-size:13px;color:#888;font-weight:400">(Exchange / Return / Replace / Cancel Notes)</span></div>
       <div class="table-wrap">
-        <table><thead><tr><th>#</th><th>Date</th><th>Customer</th><th>Phone</th><th>Order</th><th>Original</th><th>Exchange</th><th>Reason</th><th>Status</th></tr></thead>
-        <tbody id="exch-tbody"><tr><td colspan="9" class="loading">No exchanges</td></tr></tbody>
+        <table><thead><tr><th>#</th><th>Date</th><th>Customer</th><th>Phone</th><th>Order</th><th>Original Item</th><th>Exchange To</th><th>Action Type</th><th>Reason / Notes</th><th>Status</th></tr></thead>
+        <tbody id="exch-tbody"><tr><td colspan="10" class="loading">No actions recorded — use the ⋯ Action button on any order</td></tr></tbody>
         </table>
       </div>
     </div>
@@ -303,6 +316,42 @@ tfoot td{border-top:2px solid #2a2a45;background:#1a1a35;font-weight:700;padding
     <div class="screen" id="screen-team">
       <div class="page-title">Team Management <button class="btn-sm" onclick="openUserModal()">+ Add User</button></div>
       <div id="user-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px"></div>
+    </div>
+    <!-- ORDER ACTION MODAL -->
+    <div class="modal-overlay" id="action-modal" style="display:none" onclick="if(event.target===this)closeActionModal()">
+      <div class="modal-box">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <h3 style="font-size:16px;font-weight:700">📋 Order Action</h3>
+          <button onclick="closeActionModal()" style="background:none;border:none;color:#888;font-size:22px;cursor:pointer;line-height:1">✕</button>
+        </div>
+        <div id="action-order-info" style="background:#0f0f1a;border-radius:8px;padding:12px;margin-bottom:16px;font-size:13px;color:#aaa;line-height:1.6"></div>
+        <div class="modal-field">
+          <label>Action Type</label>
+          <div style="display:flex;gap:8px;flex-wrap:wrap" id="action-type-btns">
+            <button class="tab-btn active" onclick="selectActionType('exchange',this)" style="color:#6366f1">🔄 Exchange</button>
+            <button class="tab-btn" onclick="selectActionType('return',this)" style="color:#f87171">↩ Return</button>
+            <button class="tab-btn" onclick="selectActionType('replace',this)" style="color:#fb923c">🔁 Replace (Same)</button>
+            <button class="tab-btn" onclick="selectActionType('cancel_note',this)" style="color:#9ca3af">✕ Cancel Note</button>
+          </div>
+        </div>
+        <div id="action-item-fields">
+          <div class="modal-2col">
+            <div class="modal-field"><label>Original Item</label><input type="text" id="a-orig-item" placeholder="Item name / SKU"></div>
+            <div class="modal-field"><label>Size / Variant</label><input type="text" id="a-orig-size" placeholder="e.g. M, XL"></div>
+          </div>
+          <div id="exchange-to-fields" class="modal-2col">
+            <div class="modal-field"><label>Exchange To (Item)</label><input type="text" id="a-exch-item" placeholder="New item name / SKU"></div>
+            <div class="modal-field"><label>Exchange To (Size)</label><input type="text" id="a-exch-size" placeholder="e.g. L, XXL"></div>
+          </div>
+        </div>
+        <div class="modal-field"><label>Reason</label><input type="text" id="a-reason" placeholder="Why is this action being taken?"></div>
+        <div class="modal-field"><label>Remarks / Notes</label><textarea id="a-remarks" rows="3" placeholder="Any additional notes, customer requests, special instructions..."></textarea></div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px">
+          <button class="btn-sm btn-outline" onclick="closeActionModal()">Cancel</button>
+          <button class="btn-sm" onclick="submitOrderAction()" id="action-submit-btn">✓ Record Action</button>
+        </div>
+        <div id="action-history" style="margin-top:20px"></div>
+      </div>
     </div>
     <!-- SETTINGS -->
     <div class="screen" id="screen-settings">
@@ -351,7 +400,7 @@ function toast(msg,type='info'){var c=document.getElementById('toast-container')
 
 function show(screenId){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));var el=document.getElementById('screen-'+screenId);if(el)el.classList.add('active');}
 
-function nav(page){document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));var items=document.querySelectorAll('.nav-item');items.forEach(n=>{if(n.textContent.toLowerCase().includes(page)||n.getAttribute('onclick')?.includes("'"+page+"'")){n.classList.add('active');}});show(page);if(page==='dashboard')loadDash();else if(page==='orders')loadOrders();else if(page==='shipments')renderShipments();else if(page==='sales')loadSales();else if(page==='settings')loadSettings();else if(page==='team')loadUsers();else if(page==='po')loadPOs();else if(page==='cod')loadCOD();else if(page==='ndr')loadNDR();}
+function nav(page){document.querySelectorAll('.nav-item').forEach(n->n.classList.remove('active'));var items=document.querySelectorAll('.nav-item');items.forEach(n->{if(n.textContent.toLowerCase().includes(page)||n.getAttribute('onclick')?.includes("'"+page+"'")){n.classList.add('active');}});show(page);if(page==='dashboard')loadDash();else if(page==='orders')loadOrders();else if(page==='shipments')renderShipments();else if(page==='sales')loadSales();else if(page==='settings')loadSettings();else if(page==='team')loadUsers();else if(page==='po')loadPOs();else if(page==='cod')loadCOD();else if(page==='ndr')loadNDR();else if(page==='exchanges')loadExchanges();}
 
 async function doLogin(){var btn=document.getElementById('login-btn');var err=document.getElementById('login-err');var em=document.getElementById('email').value;var pw=document.getElementById('password').value;if(!em||!pw){err.textContent='Enter email and password';err.classList.remove('hidden');return;}btn.disabled=true;btn.textContent='Logging in...';err.classList.add('hidden');try{var d=await api('POST','/auth/login',{email:em,password:pw});S.user=d.user;document.getElementById('login-screen').classList.add('hidden');document.getElementById('app-screen').classList.remove('hidden');await loadDash();}catch(e){err.textContent=e.message||'Login failed';err.classList.remove('hidden');}finally{btn.disabled=false;btn.textContent='Login';}}
 
@@ -366,7 +415,7 @@ var _ordChannelFilter = 'all';
 var _ordPaymentFilter = '';
 var _ordDeliveryFilter = [];
 
-function dsLabel(s){var m={pending:'Pending',dispatched:'Dispatched',in_transit:'In Transit',out_for_delivery:'Out for Delivery',delivered:'✓ Delivered',ndr:'NDR',rto:'RTO',partial:'Partial'};return m[s]||s;}
+function dsLabel(s){var m={pending:'Pending',dispatched:'Dispatched',in_transit:'In Transit',out_for_delivery:'Out for Delivery',delivered:'✓ Delivered',ndr:'NDR',rto:'RTO',partial:'Partial',cancelled:'Cancelled'};return m[s]||s;}
 
 function setChannelTab(val,btn){
   _ordChannelFilter=val;
@@ -424,35 +473,38 @@ async function loadOrders(reset){
       {l:'Prepaid',v:orders.filter(o=>o.payment==='Prepaid').length,c:'purple'},
       {l:'Refunded',v:orders.filter(o=>o.payment==='Refunded'||o.payment==='Partial Refund').length,c:'red'},
     ].map(x=>'<div class="card"><div class="card-label">'+x.l+'</div><div class="card-val '+x.c+'">'+x.v+'</div></div>').join('');
-    if(!orders.length){tb.innerHTML='<tr><td colspan="15" class="loading">No orders found</td></tr>';return;}
+    if(!orders.length){tb.innerHTML='<tr><td colspan="17" class="loading">No orders found</td></tr>';return;}
     tb.innerHTML=orders.map(o=>{
       var ds='ds-'+(o.delivery||'pending');
       var awbHtml=o.awb?'<a style="color:#6366f1;font-size:11px">'+o.awb+'</a>':'-';
-      // FIX 1: Items with clear name + qty count + SKU
+      // Items with image, name, SKU
       var itemsHtml=(o.line_items&&o.line_items.length)?o.line_items.map(i=>{
-        var img=i.image?'<img src="'+i.image+'" style="width:28px;height:28px;object-fit:cover;border-radius:3px;margin-right:4px;vertical-align:middle;flex-shrink:0" onerror="this.style.display=\'none\'">':'';
-        // Show: "Product Name ×2"  with SKU on next line
-        var nameDisplay=i.name.length>35?i.name.substring(0,33)+'…':i.name;
-        return '<div class="item-block" style="display:flex;align-items:flex-start;gap:0">'+img+'<div><span style="font-weight:700;color:#e0e0f0">'+nameDisplay+'</span>'+(i.sku?'<span class="item-sku" style="display:block;color:#555;font-size:10px">SKU: '+i.sku+'</span>':'')+'<span style="color:#6366f1;font-weight:700;font-size:11px"> ×'+i.quantity+'</span></div></div>';
+        var img=i.image?'<img src="'+i.image+'" style="width:38px;height:38px;object-fit:cover;border-radius:5px;margin-right:6px;flex-shrink:0;border:1px solid #2a2a45" onerror="this.style.display=\'none\'">':'';
+        var nameDisplay=i.name.length>38?i.name.substring(0,36)+'…':i.name;
+        return '<div class="item-block" style="display:flex;align-items:center;margin-bottom:4px">'+img+'<div><span style="font-weight:600;color:#e0e0f0">'+nameDisplay+'</span>'+(i.variant_title?'<span style="color:#888;font-size:10px"> — '+i.variant_title+'</span>':'')+'<br>'+(i.sku?'<span style="color:#555;font-size:10px">SKU: '+i.sku+'</span>':'')+'<span style="color:#6366f1;font-weight:700;font-size:11px;margin-left:4px"> ×'+i.quantity+'</span></div></div>';
       }).join(''):(o.items||'-');
-      // Payment badge - color coded
+      // Payment badge
       var payColor=o.payment==='Prepaid'?'badge-blue':o.payment==='Partial COD'?'badge-gray':o.payment==='COD (Collected)'?'badge-green':o.payment==='Refunded'?'badge-red':o.payment==='Partial Refund'?'badge-red':'badge-orange';
       var payBadge='<span class="badge '+payColor+'" style="font-size:10px;white-space:nowrap">'+o.payment+'</span>';
-      // FIX 2: Paid / Balance with correct amounts
+      // Payment mode
+      var modeHtml=o.payment_mode?'<span style="font-size:10px;color:#888">'+o.payment_mode+'</span>':'<span style="color:#333;font-size:10px">—</span>';
+      // Paid / Balance
       var paidHtml=o.paid_amount>0?'<span style="color:#4ade80;font-size:12px;font-weight:700">₹'+Math.round(o.paid_amount).toLocaleString('en-IN')+'</span>':'<span style="color:#444;font-size:11px">—</span>';
       var balHtml=o.balance_amount>0?'<span style="color:#f87171;font-size:12px;font-weight:700">₹'+Math.round(o.balance_amount).toLocaleString('en-IN')+'</span>':'<span style="color:#4ade80;font-size:11px">✓ Paid</span>';
       // Channel
       var chBadge=o.channel==='pos'?'<span class="badge badge-purple" style="font-size:10px">POS</span>':'<span class="badge badge-gray" style="font-size:10px">Web</span>';
       // Package
       var pkgHtml=o.pkg_summary||'—';
-      return'<tr><td><b>'+o.name+'</b></td><td style="white-space:nowrap;font-size:12px">'+o.date+'</td><td>'+o.customer+'</td><td style="font-size:12px;color:#888">'+o.phone+'</td><td>'+o.city+'<br><span style="font-size:10px;color:#666">'+o.state+'</span></td><td style="max-width:200px">'+itemsHtml+'</td><td style="white-space:nowrap">₹'+Math.round(o.amount||0).toLocaleString('en-IN')+'</td><td>'+paidHtml+'</td><td>'+balHtml+'</td><td>'+payBadge+'</td><td><span class="ds '+ds+'">'+dsLabel(o.delivery)+'</span></td><td style="font-size:11px;color:#aaa">'+(o.courier||'—')+'</td><td style="font-size:11px;color:#aaa">'+pkgHtml+'</td><td style="font-size:11px">'+awbHtml+'</td><td>'+chBadge+'</td></tr>';
+      // Actions btn
+      var actBtn='<button onclick=\'openActionModal('+JSON.stringify(o).replace(/\'/g,"\\'")+')\'  class="btn-sm btn-outline" style="font-size:11px;padding:4px 8px;white-space:nowrap">⋯ Action</button>';
+      return'<tr><td><b>'+o.name+'</b></td><td style="white-space:nowrap;font-size:12px">'+o.date+'</td><td>'+o.customer+'</td><td style="font-size:12px;color:#888">'+o.phone+'</td><td>'+o.city+'<br><span style="font-size:10px;color:#666">'+o.state+'</span></td><td style="max-width:220px">'+itemsHtml+'</td><td style="white-space:nowrap">₹'+Math.round(o.amount||0).toLocaleString('en-IN')+'</td><td>'+paidHtml+'</td><td>'+balHtml+'</td><td>'+payBadge+'</td><td>'+modeHtml+'</td><td><span class="ds '+ds+'">'+dsLabel(o.delivery)+'</span></td><td style="font-size:11px;color:#aaa">'+(o.courier||'—')+'</td><td style="font-size:11px;color:#aaa">'+pkgHtml+'</td><td style="font-size:11px">'+awbHtml+'</td><td>'+chBadge+'</td><td>'+actBtn+'</td></tr>';
     }).join('');
     // Footer totals
     var tf=document.getElementById('orders-tfoot');
-    if(tf) tf.innerHTML='<tr><td colspan="6" style="text-align:right;color:#888">TOTAL — '+orders.length+' orders</td><td>₹'+Math.round(totAmt).toLocaleString('en-IN')+'</td><td style="color:#4ade80">₹'+Math.round(totPaid).toLocaleString('en-IN')+'</td><td style="color:#f87171">₹'+Math.round(totBal).toLocaleString('en-IN')+'</td><td colspan="6"></td></tr>';
+    if(tf) tf.innerHTML='<tr><td colspan="6" style="text-align:right;color:#888">TOTAL — '+orders.length+' orders</td><td>₹'+Math.round(totAmt).toLocaleString('en-IN')+'</td><td style="color:#4ade80">₹'+Math.round(totPaid).toLocaleString('en-IN')+'</td><td style="color:#f87171">₹'+Math.round(totBal).toLocaleString('en-IN')+'</td><td colspan="8"></td></tr>';
     // With cursor pagination, all orders in range are already loaded — hide load-more
     document.getElementById('load-more-wrap').style.display='none';
-  }catch(e){tb.innerHTML='<tr><td colspan="15" style="color:#f87171;text-align:center;padding:20px">'+e.message+'</td></tr>';}
+  }catch(e){tb.innerHTML='<tr><td colspan="17" style="color:#f87171;text-align:center;padding:20px">'+e.message+'</td></tr>';}
 }
 
 async function loadMoreOrders(){
@@ -491,7 +543,114 @@ async function loadUsers(){try{var d=await api('GET','/users');var items=Array.i
 function openUserModal(){toast('Add user via API - UI form coming soon','info');}
 function openProductModal(){toast('Add product via API - UI form coming soon','info');}
 function openExchangeModal(){toast('Add exchange via API - UI form coming soon','info');}
-function exportOrders(){var rows=[['Order','Date','Customer','City','Amount','Payment','Fulfillment','AWB'],...S.orders.map(o=>[o.name,(o.created_at||'').substring(0,10),o.billing_address?.name||'',o.shipping_address?.city||'',o.total_price,o.payment_gateway_names?.[0]||'',o.fulfillment_status||'unfulfilled',(o.fulfillments||[]).flatMap(f=>f.tracking_numbers||[]).join(', ')||''])];var csv=rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');var b=new Blob([csv],{type:'text/csv'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='orders.csv';a.click();}
+function exportOrders(){
+  var esc=function(v){return'"'+String(v==null?'':v).replace(/"/g,'""')+'"';};
+  var headers=['Order#','Date','Customer','Phone','City','State','Items','SKUs','Amount','Paid','Balance','Payment','Payment Mode','Delivery','AWB','Courier','Channel','Package'];
+  var rows=[headers.map(esc).join(',')];
+  S.orders.forEach(function(o){
+    var itemsStr=(o.line_items||[]).map(function(i){return i.name+' ×'+i.quantity+(i.variant_title?' ('+i.variant_title+')':'');}).join('; ')||o.items||'';
+    var skusStr=(o.line_items||[]).map(function(i){return i.sku||'';}).filter(Boolean).join('; ');
+    rows.push([esc(o.name),esc(o.date),esc(o.customer),esc(o.phone),esc(o.city),esc(o.state),esc(itemsStr),esc(skusStr),o.amount||0,o.paid_amount||0,o.balance_amount||0,esc(o.payment||''),esc(o.payment_mode||''),esc(o.delivery||''),esc(o.awb||''),esc(o.courier||''),esc(o.channel||''),esc(o.pkg_summary||'')].join(','));
+  });
+  var csv=rows.join('\n');
+  var b=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(b);
+  a.download='orders_'+new Date().toISOString().substring(0,10)+'.csv';a.click();
+}
+
+// ── ORDER ACTION MODAL ──────────────────────────────────────────────────
+var _actionOrder=null,_actionType='exchange';
+function openActionModal(order){
+  _actionOrder=order;_actionType='exchange';
+  // Pre-fill order info
+  document.getElementById('action-order-info').innerHTML='<b style="color:#f0f0f5">'+order.name+'</b> &nbsp;·&nbsp; '+order.customer+(order.phone?' <span style="color:#6366f1">'+order.phone+'</span>':'')+'<br><span style="color:#888;font-size:12px">'+(order.items||'')+'</span>'+(order.payment?'<br><span class="badge badge-gray" style="font-size:10px;margin-top:4px">'+order.payment+'</span>':'')+( order.delivery?'<span class="ds ds-'+order.delivery+'" style="margin-left:6px">'+dsLabel(order.delivery)+'</span>':'');
+  // Pre-fill first item
+  var first=(order.line_items||[])[0]||{};
+  document.getElementById('a-orig-item').value=first.name||'';
+  document.getElementById('a-orig-size').value=first.variant_title||'';
+  document.getElementById('a-exch-item').value='';
+  document.getElementById('a-exch-size').value='';
+  document.getElementById('a-reason').value='';
+  document.getElementById('a-remarks').value='';
+  // Reset tabs
+  document.querySelectorAll('#action-type-btns .tab-btn').forEach(function(b){b.classList.remove('active');});
+  document.querySelectorAll('#action-type-btns .tab-btn')[0].classList.add('active');
+  document.getElementById('exchange-to-fields').style.display='';
+  // Show modal
+  var m=document.getElementById('action-modal');m.style.display='flex';
+  // Load history
+  loadActionHistory(order.id);
+}
+function closeActionModal(){document.getElementById('action-modal').style.display='none';}
+function selectActionType(type,btn){
+  _actionType=type;
+  document.querySelectorAll('#action-type-btns .tab-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  // Hide exchange-to for non-exchange types
+  document.getElementById('exchange-to-fields').style.display=(type==='exchange')?'':'none';
+}
+async function submitOrderAction(){
+  if(!_actionOrder)return;
+  var btn=document.getElementById('action-submit-btn');
+  btn.disabled=true;btn.textContent='Submitting...';
+  try{
+    await api('POST','/exchanges',{
+      order_id:String(_actionOrder.id),
+      order_number:_actionOrder.name,
+      customer_name:_actionOrder.customer||'',
+      customer_phone:_actionOrder.phone||'',
+      action_type:_actionType,
+      reason:document.getElementById('a-reason').value,
+      remarks:document.getElementById('a-remarks').value,
+      original_item:document.getElementById('a-orig-item').value,
+      original_size:document.getElementById('a-orig-size').value,
+      exchange_item:document.getElementById('a-exch-item').value,
+      exchange_size:document.getElementById('a-exch-size').value
+    });
+    toast('Action recorded!','success');
+    document.getElementById('a-reason').value='';
+    document.getElementById('a-remarks').value='';
+    loadActionHistory(_actionOrder.id);
+  }catch(e){toast(e.message,'error');}
+  finally{btn.disabled=false;btn.textContent='✓ Record Action';}
+}
+async function loadActionHistory(orderId){
+  var div=document.getElementById('action-history');if(!div)return;
+  try{
+    var items=await api('GET','/exchanges');
+    var forOrder=items.filter(function(e){return String(e.order_id)===String(orderId);});
+    if(!forOrder.length){div.innerHTML='';return;}
+    var typeColor={exchange:'badge-blue',return:'badge-red',replace:'badge-orange',cancel_note:'badge-gray'};
+    var typeIcon={exchange:'🔄',return:'↩',replace:'🔁',cancel_note:'✕'};
+    div.innerHTML='<div style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;border-top:1px solid #2a2a45;padding-top:12px">Action History</div>'+
+      forOrder.map(function(a){
+        var at=a.action_type||'exchange';
+        return '<div style="background:#0f0f1a;border:1px solid #2a2a45;border-radius:7px;padding:10px;margin-bottom:6px">'+
+          '<span class="badge '+(typeColor[at]||'badge-gray')+'" style="font-size:10px">'+( typeIcon[at]||'')+(at.replace('_',' ')).toUpperCase()+'</span>'+
+          (a.original_item?' <span style="font-size:12px;color:#ddd">'+a.original_item+(a.original_size?' / '+a.original_size:'')+'</span>':'')+
+          (a.exchange_item?' <span style="color:#888">→</span> <span style="font-size:12px;color:#ddd">'+a.exchange_item+(a.exchange_size?' / '+a.exchange_size:'')+'</span>':'')+
+          (a.reason?'<div style="font-size:12px;color:#888;margin-top:3px">'+a.reason+'</div>':'')+
+          (a.remarks?'<div style="font-size:11px;color:#666;font-style:italic;margin-top:2px">'+a.remarks+'</div>':'')+
+          '<div style="font-size:10px;color:#444;margin-top:4px">'+(a.created_at||'').substring(0,16)+(a.status?' · <span style="color:#888">'+a.status+'</span>':'')+'</div>'+
+          '</div>';
+      }).join('');
+  }catch(e){}
+}
+
+// ── EXCHANGES SCREEN ────────────────────────────────────────────────────
+async function loadExchanges(){
+  try{
+    var d=await api('GET','/exchanges');
+    var items=Array.isArray(d)?d:[];
+    var typeColor={exchange:'badge-blue',return:'badge-red',replace:'badge-orange',cancel_note:'badge-gray'};
+    var typeIcon={exchange:'🔄',return:'↩',replace:'🔁',cancel_note:'✕'};
+    document.getElementById('exch-tbody').innerHTML=items.length?items.map(function(e){
+      var at=e.action_type||'exchange';
+      var typeBadge='<span class="badge '+(typeColor[at]||'badge-gray')+'" style="font-size:10px">'+(typeIcon[at]||'')+' '+(at.replace('_',' ')).toUpperCase()+'</span>';
+      return '<tr><td>'+e.id+'</td><td>'+(e.created_at||'').substring(0,10)+'</td><td>'+e.customer_name+'</td><td style="font-size:12px;color:#888">'+(e.customer_phone||'-')+'</td><td>'+(e.order_number||'-')+'</td><td style="font-size:12px">'+(e.original_item||'-')+(e.original_size?' / <b>'+e.original_size+'</b>':'')+'</td><td style="font-size:12px">'+(e.exchange_item||'-')+(e.exchange_size?' / <b>'+e.exchange_size+'</b>':'')+'</td><td>'+typeBadge+'</td><td style="font-size:11px;color:#888">'+(e.reason||e.remarks||'-')+'</td><td><span class="badge '+(e.status==='resolved'?'badge-green':'badge-orange')+'">'+e.status+'</span></td></tr>';
+    }).join(''):'<tr><td colspan="10" class="loading">No actions recorded</td></tr>';
+  }catch(e){toast(e.message,'error');}
+}
 
 // Init
 (async function(){try{var d=await api('GET','/auth/me');if(d.user){S.user=d.user;document.getElementById('login-screen').classList.add('hidden');document.getElementById('app-screen').classList.remove('hidden');await loadDash();}}catch(e){}
