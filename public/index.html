@@ -118,16 +118,20 @@ tfoot td{border-top:2px solid #2a2a45;background:#1a1a35;font-weight:700;padding
 .ds-cancelled{background:rgba(156,163,175,.15);color:#9ca3af}
 .chip-btn.ds-cancelled{color:#9ca3af;border-color:rgba(156,163,175,.4)}
 .chip-btn.ds-cancelled.active{background:rgba(156,163,175,.2);border-color:#9ca3af}
+/* FULFILLED (Walk-in in-store handover) */
+.ds-fulfilled{background:rgba(52,211,153,.1);color:#34d399}
+.chip-btn.ds-fulfilled{color:#34d399;border-color:rgba(52,211,153,.4)}
+.chip-btn.ds-fulfilled.active{background:rgba(52,211,153,.15);border-color:#34d399}
 /* MODAL */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;align-items:center;justify-content:center}
 .modal-box{background:#16162a;border:1px solid #2a2a45;border-radius:12px;padding:24px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto}
 .modal-field{margin-bottom:12px}
-.modal-field label{display:block;mfont-size:11px;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.modal-field label{display:block;font-size:11px;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
 .modal-field input,.modal-field select,.modal-field textarea{width:100%;padding:9px 12px;background:#0f0f1a;border:1px solid #2a2a45;border-radius:7px;color:#f0f0f5;font-size:13px;outline:none}
 .modal-field textarea{resize:vertical}
 .modal-2col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 /* MOBILE */
-@media(max-width:768px){.sidebar{display:none}.main{width:100}}
+@media(max-width:768px){.sidebar{display:none}.main{width:100%}}
 </style>
 </head>
 <body>
@@ -184,12 +188,12 @@ tfoot td{border-top:2px solid #2a2a45;background:#1a1a35;font-weight:700;padding
         <div class="tab-label">Channel</div>
         <div class="tab-group" id="channel-tabs">
           <button class="tab-btn active" onclick="setChannelTab('all',this)">All</button>
-          <button class="tab-btn" onclick="setChannelTab('web',this)">🌐 Website</button>
-          <button class="tab-btn" onclick="setChannelTab('pos',this)">🏪 POS</button>
+          <button class="tab-btn" onclick="setChannelTab('web',this)">🌐 Online</button>
+          <button class="tab-btn" onclick="setChannelTab('pos',this)">🏪 Walk-in</button>
         </div>
       </div>
       <!-- Payment Tabs -->
-      <div class="filter-tabs-row">
+      <div clas="filter-tabs-row">
         <div class="tab-label">Payment</div>
         <div class="tab-group" id="payment-tabs">
           <button class="tab-btn active" onclick="setPaymentTab('',this)">All</button>
@@ -197,7 +201,8 @@ tfoot td{border-top:2px solid #2a2a45;background:#1a1a35;font-weight:700;padding
           <button class="tab-btn" onclick="setPaymentTab('COD',this)">COD</button>
           <button class="tab-btn" onclick="setPaymentTab('Partial COD',this)">Partial COD</button>
           <button class="tab-btn" onclick="setPaymentTab('Refunded',this)" style="color:#f87171">↩ Refunded</button>
-          <button class="tab-btn" onclick="setPaymentTab('Partial Refund',this)" style="color:#fb923c">↩ Partial Refund</button>
+          <button class="tab-btn" onclick="setPaymentTab('Partial Refund',this)" style="color:#fb923c">榙 Partial Refund</button>
+          <button class="tab-btn" onclick="setPaymentTab('Unpaid',this)" style="color:#f87171">⚠ Unpaid</button>
           <button class="tab-btn active red" id="pending-pay-tab" onclick="setPaymentTab('pending_balance',this)" style="display:none">⚠ Pending Payment</button>
         </div>
         <button class="tab-btn" style="margin-left:8px" onclick="setPaymentTab('pending_balance',document.getElementById('pending-pay-tab'))">⚠ Pending Balance</button>
@@ -210,7 +215,8 @@ tfoot td{border-top:2px solid #2a2a45;background:#1a1a35;font-weight:700;padding
           <button class="chip-btn ds-dispatched" onclick="toggleDeliveryChip('dispatched',this)">Dispatched</button>
           <button class="chip-btn ds-in_transit" onclick="toggleDeliveryChip('in_transit',this)">In Transit</button>
           <button class="chip-btn ds-out_for_delivery" onclick="toggleDeliveryChip('out_for_delivery',this)">Out for Delivery</button>
-          <button class="chip-btn ds-delivered" onclick="toggleDeliveryChip('delivered',this)">✓ Delivered</button>
+          <button class="chip-btn ds-delivered" onclick="toggleDeliveryChip('delivered',this)">✜ Delivered</button>
+          <button class="chip-btn ds-fulfilled" onclick="toggleDeliveryChip('fulfilled',this)">✜ Fulfilled</button>
           <button class="chip-btn ds-ndr" onclick="toggleDeliveryChip('ndr',this)">NDR</button>
           <button class="chip-btn ds-rto" onclick="toggleDeliveryChip('rto',this)">RTO</button>
           <button class="chip-btn ds-cancelled" onclick="toggleDeliveryChip('cancelled',this)">Cancelled</button>
@@ -221,7 +227,7 @@ tfoot td{border-top:2px solid #2a2a45;background:#1a1a35;font-weight:700;padding
         <input type="date" id="ord-from">
         <input type="date" id="ord-to">
         <input type="text" id="ord-search" placeholder="Order / customer / AWB / city / SKU" style="width:240px">
-        <button class="btn-sm" onclick="loadOrders()">🔍 Search</button>
+        <button cclass="btn-sm" onclick="loadOrders()">🔍 Search</button>
         <button class="btn-sm btn-outline" onclick="exportOrders()">📥 Export</button>
       </div>
       <!-- Table -->
@@ -415,7 +421,7 @@ var _ordChannelFilter = 'all';
 var _ordPaymentFilter = '';
 var _ordDeliveryFilter = [];
 
-function dsLabel(s){var m={pending:'Pending',dispatched:'Dispatched',in_transit:'In Transit',out_for_delivery:'Out for Delivery',delivered:'✓ Delivered',ndr:'NDR',rto:'RTO',partial:'Partial',cancelled:'Cancelled'};return m[s]||s;}
+function dsLabel(s){var m={pending:'Pending',dispatched:'Dispatched',in_transit:'In Transit',out_for_delivery:'Out for Delivery',delivered:'✓ Delivered',fulfilled:'✓ Fulfilled',ndr:'NDR',rto:'RTO',partial:'Partial',cancelled:'Cancelled'};return m[s]||s;}
 
 function setChannelTab(val,btn){
   _ordChannelFilter=val;
@@ -472,6 +478,7 @@ async function loadOrders(reset){
       {l:'Partial COD',v:orders.filter(o=>o.payment==='Partial COD').length,c:'orange'},
       {l:'Prepaid',v:orders.filter(o=>o.payment==='Prepaid').length,c:'purple'},
       {l:'Refunded',v:orders.filter(o=>o.payment==='Refunded'||o.payment==='Partial Refund').length,c:'red'},
+      {l:'Unpaid',v:orders.filter(o=>o.payment==='Unpaid').length,c:'red'},
     ].map(x=>'<div class="card"><div class="card-label">'+x.l+'</div><div class="card-val '+x.c+'">'+x.v+'</div></div>').join('');
     if(!orders.length){tb.innerHTML='<tr><td colspan="17" class="loading">No orders found</td></tr>';return;}
     tb.innerHTML=orders.map(o=>{
@@ -484,7 +491,7 @@ async function loadOrders(reset){
         return '<div class="item-block" style="display:flex;align-items:center;margin-bottom:4px">'+img+'<div><span style="font-weight:600;color:#e0e0f0">'+nameDisplay+'</span>'+(i.variant_title?'<span style="color:#888;font-size:10px"> — '+i.variant_title+'</span>':'')+'<br>'+(i.sku?'<span style="color:#555;font-size:10px">SKU: '+i.sku+'</span>':'')+'<span style="color:#6366f1;font-weight:700;font-size:11px;margin-left:4px"> ×'+i.quantity+'</span></div></div>';
       }).join(''):(o.items||'-');
       // Payment badge
-      var payColor=o.payment==='Prepaid'?'badge-blue':o.payment==='Partial COD'?'badge-gray':o.payment==='COD (Collected)'?'badge-green':o.payment==='Refunded'?'badge-red':o.payment==='Partial Refund'?'badge-red':'badge-orange';
+      var payColor=o.payment==='Prepaid'?'badge-blue':o.payment==='Partial COD'?'badge-gray':o.payment==='COD (Collected)'?'badge-green':o.payment==='Refunded'||o.payment==='Unpaid'?'badge-red':o.payment==='Partial Refund'?'badge-red':'badge-orange';
       var payBadge='<span class="badge '+payColor+'" style="font-size:10px;white-space:nowrap">'+o.payment+'</span>';
       // Payment mode
       var modeHtml=o.payment_mode?'<span style="font-size:10px;color:#888">'+o.payment_mode+'</span>':'<span style="color:#333;font-size:10px">—</span>';
@@ -492,7 +499,7 @@ async function loadOrders(reset){
       var paidHtml=o.paid_amount>0?'<span style="color:#4ade80;font-size:12px;font-weight:700">₹'+Math.round(o.paid_amount).toLocaleString('en-IN')+'</span>':'<span style="color:#444;font-size:11px">—</span>';
       var balHtml=o.balance_amount>0?'<span style="color:#f87171;font-size:12px;font-weight:700">₹'+Math.round(o.balance_amount).toLocaleString('en-IN')+'</span>':'<span style="color:#4ade80;font-size:11px">✓ Paid</span>';
       // Channel
-      var chBadge=o.channel==='pos'?'<span class="badge badge-purple" style="font-size:10px">POS</span>':'<span class="badge badge-gray" style="font-size:10px">Web</span>';
+      var chBadge=o.channel==='pos'?'<span class="badge badge-purple" style="font-size:10px">Walk-in</span>':'<span class="badge badge-gray" style="font-size:10px">Online</span>';
       // Package
       var pkgHtml=o.pkg_summary||'—';
       // Actions btn
