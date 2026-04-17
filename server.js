@@ -476,12 +476,19 @@ app.get('/api/orders/list', auth, async (req, res) => {
     });
 
     // Lookup shipment cache & NDR
-    const statusMap = {}, ndrMap = {};
+    const statusMap = {}, ndrMap = {}, ndrOrderMap = {};
     if (awbSet.size > 0) {
       const awbArr = [...awbSet];
       const phs = awbArr.map(()=>'?').join(',');
       db.prepare(`SELECT awb,status,velocity_status,cod_amount,weight,data_json FROM shipment_cache WHERE awb IN (${phs})`).all(...awbArr).forEach(c=>{statusMap[c.awb]=c;});
       db.prepare(`SELECT awb,resolved FROM ndr_log WHERE awb IN (${phs})`).all(...awbArr).forEach(n=>{ndrMap[n.awb]=n;});
+    }
+    // Fix #11: also lookup NDR by order number (e.g. "#1996") for orders whose AWB isn't in ndr_log
+    const orderNamesList = orders.map(o=>o.name).filter(Boolean);
+    if (orderNamesList.length > 0) {
+      const uniqueOrdNames = [...new Set([...orderNamesList, ...orderNamesList.map(n=>n.replace('#',''))])];
+      const nOrdPhs = uniqueOrdNames.map(()=>'?').join(',');
+      db.prepare(`SELECT order_number,resolved FROM ndr_log WHERE order_number IN (${nOrdPhs})`).all(...uniqueOrdNames).forEach(n=>{ ndrOrderMap[n.order_number]=n; });
     }
 
     // IMAGE FIX: Look up product images from cache by variant_id
@@ -516,7 +523,7 @@ app.get('/api/orders/list', auth, async (req, res) => {
       const awb = awbs[0] || '';
       const isCOD = (o.payment_gateway_names||[]).some(p=>p.toLowerCase().includes('cod'))||(o.payment_gateway||'').toLowerCase().includes('cod');
       const cached = awb ? statusMap[awb] : null;
-      const ndr = awb ? ndrMap[awb] : null;
+      const ndr = (awb ? ndrMap[awb] : null) || ndrOrderMap[o.name] || ndrOrderMap[(o.name||'').replace('#','')];
       const isCancelled = !!o.cancelled_at;
 
       // FIX 3: Better delivery status - use Velocity cache first, then Shopify's own shipment_status
@@ -529,14 +536,23 @@ app.get('/api/orders/list', auth, async (req, res) => {
       } else if (ndr && !ndr.resolved) {
         delivery = 'ndr';
       } else if (o.fulfillment_status === 'fulfilled') {
-        // Use Shopify's own tracking shipment_status if available
-        const shipStatuses = (o.fulfillments||[]).map(f => f.shipment_status).filter(Boolean);
-        if (shipStatuses.some(s => s === 'delivered')) delivery = 'delivered';
-        else if (shipStatuses.some(s => s === 'out_for_delivery')) delivery = 'out_for_delivery';
-        else if (shipStatuses.some(s => ['in_transit', 'confirmed', 'label_purchased'].includes(s))) delivery = 'in_transit';
-        else delivery = 'dispatched';
+        // Fix #16: Walk-in (POS) customers collect in-store — use 'fulfilled', not 'dispatched'
+        if ((o.source_name||'').toLowerCase() === 'pos') {
+          delivery = 'fulfilled';
+        } else {
+          // Use Shopify's own tracking shipment_status if available
+          const shipStatuses = (o.fulfillments||[]).map(f => f.shipment_status).filter(Boolean);
+          if (shipStatuses.some(s => s === 'delivered')) delivery = 'delivered';
+          else if (shipStatuses.some(s => s === 'out_for_delivery')) delivery = 'out_for_delivery';
+          else if (shipStatuses.some(s => ['in_transit', 'confirmed', 'label_purchased'].includes(s))) delivery = 'in_transit';
+          else delivery = 'dispatched';
+        }
       } else if (o.fulfillment_status === 'partial') {
         delivery = 'partial';
+      }
+      // Fix #10: COD order marked paid in Shopify = COD collected on delivery
+      if (!isCancelled && isCOD && o.financial_status === 'paid' && delivery === 'dispatched') {
+        delivery = 'delivered';
       }
       // Still apply NDR from our log even if we have Velocity status (but not for cancelled orders)
       if (!isCancelled && ndr && !ndr.resolved && delivery !== 'delivered') delivery = 'ndr';
@@ -548,19 +564,25 @@ app.get('/api/orders/list', auth, async (req, res) => {
       // Courier partner from fulfillments
       const courier = [...new Set((o.fulfillments||[]).map(f=>f.tracking_company).filter(Boolean))].join(', ');
 
-      // Payment mode from gateway (Cash, UPI, Razorpay, Card, etc.)
-      const gw = ((o.payment_gateway_names||[])[0] || o.payment_gateway || '').toLowerCase().replace(/_/g,' ');
-      const payment_mode = gw.includes('cash') && !gw.includes('cod') ? 'Cash'
-        : gw.includes('upi') ? 'UPI'
-        : gw.includes('razorpay') ? 'Razorpay'
-        : gw.includes('paytm') ? 'Paytm'
-        : gw.includes('phonepe') ? 'PhonePe'
-        : gw.includes('gpay') || gw.includes('google pay') ? 'Google Pay'
-        : gw.includes('card') || gw.includes('stripe') ? 'Card'
-        : gw.includes('bank') || gw.includes('neft') || gw.includes('imps') ? 'Bank Transfer'
-        : gw.includes('cod') ? 'COD'
-        : gw.includes('wallet') ? 'Wallet'
-        : gw ? gw.replace(/\b\w/g, c => c.toUpperCase()) : '';
+      // Payment mode from ALL gateway names (Fix #12: Paytm Machine, Fix #14: multiple sources)
+      const gwNames = [...new Set([...(o.payment_gateway_names||[]), o.payment_gateway||''].filter(Boolean))];
+      const gwLabel = (g) => {
+        const gl = g.toLowerCase().replace(/_/g,' ');
+        return gl.includes('paytm machine') || gl.includes('paytm_machine') ? 'Paytm Machine'
+          : gl.includes('paytm') ? 'Paytm'
+          : gl.includes('cash') && !gl.includes('cod') ? 'Cash'
+          : gl.includes('upi') ? 'UPI'
+          : gl.includes('razorpay') ? 'Razorpay'
+          : gl.includes('phonepe') ? 'PhonePe'
+          : gl.includes('gpay') || gl.includes('google pay') ? 'Google Pay'
+          : gl.includes('card') || gl.includes('stripe') ? 'Card'
+          : gl.includes('bank') || gl.includes('neft') || gl.includes('imps') ? 'Bank Transfer'
+          : gl.includes('cod') ? 'COD'
+          : gl.includes('wallet') ? 'Wallet'
+          : null;
+      };
+      const gwModes = [...new Set(gwNames.map(gwLabel).filter(Boolean))];
+      const payment_mode = gwModes.length > 0 ? gwModes.join(' + ') : (gwNames[0] ? gwNames[0].replace(/\b\w/g,c=>c.toUpperCase()) : '');
 
       // FIX 1 + IMAGE FIX: Line items with name + SKU + quantity + cached image
       const line_items = (o.line_items||[]).map(i => ({
@@ -615,10 +637,18 @@ app.get('/api/orders/list', auth, async (req, res) => {
         if (cached && cached.status === 'delivered') {
           paid_amount = totalPrice; balance_amount = 0;
           paymentType = 'COD (Collected)';
+        } else if (o.financial_status === 'paid') {
+          // Fix #10: COD marked paid in Shopify = COD was collected on delivery
+          paid_amount = totalPrice; balance_amount = 0;
+          paymentType = 'COD (Collected)';
         } else {
           // COD pending - balance to collect on delivery
           paid_amount = 0; balance_amount = totalPrice;
         }
+      } else if (['pending', 'authorized', 'voided'].includes(o.financial_status)) {
+        // Fix #13: Online order not yet paid — must not show as paid
+        paid_amount = 0; balance_amount = totalPrice;
+        paymentType = 'Unpaid';
       } else {
         // Prepaid - fully paid upfront
         paid_amount = totalPrice; balance_amount = 0;
