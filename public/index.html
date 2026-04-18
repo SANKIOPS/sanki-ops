@@ -312,16 +312,91 @@ tfoot td{border-top:2px solid #2a2a45;background:#1a1a35;font-weight:700;padding
     <!-- EXCHANGES -->
     <div class="screen" id="screen-exchanges">
       <div class="page-title">Order Actions <span style="font-size:13px;color:#888;font-weight:400">(Exchange / Return / Replace / Cancel Notes)</span></div>
-      <div class="table-wrap">
-        <table><thead><tr><th>#</th><th>Date</th><th>Customer</th><th>Phone</th><th>Order</th><th>Original Item</th><th>Exchange To</th><th>Action Type</th><th>Reason / Notes</th><th>Status</th></tr></thead>
-        <tbody id="exch-tbody"><tr><td colspan="10" class="loading">No actions recorded — use the ⋯ Action button on any order</td></tr></tbody>
+      <div class="cards" id="exch-stats" style="margin-bottom:16px"></div>
+      <div class="filter-tabs-row">
+        <div class="tab-label">Status</div>
+        <div class="tab-group" id="exch-status-tabs">
+          <button class="tab-btn active" onclick="setExchStatusTab('',this)">All</button>
+          <button class="tab-btn" onclick="setExchStatusTab('pending',this)" style="color:#fb923c">Pending</button>
+          <button class="tab-btn" onclick="setExchStatusTab('in_progress',this)" style="color:#60a5fa">In Progress</button>
+          <button class="tab-btn" onclick="setExchStatusTab('resolved',this)" style="color:#4ade80">Resolved</button>
+          <button class="tab-btn" onclick="setExchStatusTab('cancelled',this)" style="color:#9ca3af">Cancelled</button>
+        </div>
+      </div>
+      <div class="filter-tabs-row">
+        <div class="tab-label">Type</div>
+        <div class="tab-group" id="exch-type-tabs">
+          <button class="tab-btn active" onclick="setExchTypeTab('',this)">All</button>
+          <button class="tab-btn" onclick="setExchTypeTab('exchange',this)" style="color:#6366f1">🔄 Exchange</button>
+          <button class="tab-btn" onclick="setExchTypeTab('return',this)" style="color:#f87171">↩ Return</button>
+          <button class="tab-btn" onclick="setExchTypeTab('replace',this)" style="color:#fb923c">🔁 Replace</button>
+          <button class="tab-btn" onclick="setExchTypeTab('cancel_note',this)" style="color:#9ca3af">✕ Cancel Note</button>
+        </div>
+      </div>
+      <div class="filters" style="margin-top:4px">
+        <input type="text" id="exch-search" placeholder="Search order / customer..." style="width:220px" oninput="filterExchanges()">
+        <input type="date" id="exch-from" onchange="filterExchanges()">
+        <input type="date" id="exch-to" onchange="filterExchanges()">
+        <button class="btn-sm btn-outline" onclick="exportExchanges()">📥 Export</button>
+      </div>
+      <div class="table-wrap" style="overflow-x:auto">
+        <table style="min-width:960px"><thead><tr><th>#</th><th>Date</th><th>Customer</th><th>Phone</th><th>Order</th><th>Original Item</th><th>Exchange To</th><th>Type</th><th>Reason / Notes</th><th>Status</th><th>Action</th></tr></thead>
+        <tbody id="exch-tbody"><tr><td colspan="11" class="loading">No actions recorded — use the ⋯ Action button on any order</td></tr></tbody>
         </table>
       </div>
     </div>
     <!-- TEAM -->
     <div class="screen" id="screen-team">
       <div class="page-title">Team Management <button class="btn-sm" onclick="openUserModal()">+ Add User</button></div>
-      <div id="user-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px"></div>
+      <div id="user-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px"></div>
+    </div>
+    <!-- USER MODAL -->
+    <div class="modal-overlay" id="user-modal" style="display:none" onclick="if(event.target===this)closeUserModal()">
+      <div class="modal-box">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <h3 style="font-size:16px;font-weight:700" id="user-modal-title">👤 Add User</h3>
+          <button onclick="closeUserModal()" style="background:none;border:none;color:#888;font-size:22px;cursor:pointer;line-height:1">✕</button>
+        </div>
+        <input type="hidden" id="u-id">
+        <div class="modal-2col">
+          <div class="modal-field"><label>Full Name</label><input type="text" id="u-name" placeholder="e.g. Ravi Sharma"></div>
+          <div class="modal-field"><label>Email</label><input type="email" id="u-email" placeholder="ravi@sanki.in"></div>
+        </div>
+        <div class="modal-2col">
+          <div class="modal-field"><label>Password <span id="u-pass-note" style="color:#555">(required for new)</span></label><input type="password" id="u-pass" placeholder="Min 6 chars"></div>
+          <div class="modal-field"><label>Phone</label><input type="text" id="u-phone" placeholder="+91XXXXXXXXXX"></div>
+        </div>
+        <div class="modal-2col">
+          <div class="modal-field"><label>Role</label><select id="u-role"><option value="staff">Staff</option><option value="manager">Manager</option><option value="owner">Owner</option></select></div>
+          <div class="modal-field"><label>Department</label><input type="text" id="u-dept" placeholder="e.g. Operations"></div>
+        </div>
+        <div class="modal-field" style="margin-top:4px">
+          <label style="margin-bottom:10px;display:block">Section Access <span style="color:#555;font-size:10px">(Owner = all access)</span></label>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px" id="perm-checkboxes">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #2a2a45;border-radius:6px"><input type="checkbox" value="dashboard"> 🏠 Dashboard</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #2a2a45;border-radius:6px"><input type="checkbox" value="orders"> 📦 All Orders</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #2a2a45;border-radius:6px"><input type="checkbox" value="orders_online"> 🌐 Online Orders</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #2a2a45;border-radius:6px"><input type="checkbox" value="orders_walkin"> 🏪 Walk-in Orders</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #2a2a45;border-radius:6px"><input type="checkbox" value="shipments"> 🚚 Shipments</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #2a2a45;border-radius:6px"><input type="checkbox" value="cod"> 💰 COD & Pay</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #2a2a45;border-radius:6px"><input type="checkbox" value="ndr"> ⚠️ NDR</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #2a2a45;border-radius:6px"><input type="checkbox" value="po"> 📋 Purchase Orders</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #2a2a45;border-radius:6px"><input type="checkbox" value="sales"> 👥 Sales</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #2a2a45;border-radius:6px"><input type="checkbox" value="marketing"> 📱 Marketing</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #2a2a45;border-radius:6px"><input type="checkbox" value="exchanges"> 🔄 Exchanges</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #2a2a45;border-radius:6px"><input type="checkbox" value="team"> 👤 Team</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #2a2a45;border-radius:6px"><input type="checkbox" value="settings"> ⚙️ Settings</label>
+          </div>
+          <div style="margin-top:8px;display:flex;gap:8px">
+            <button class="btn-sm btn-outline" style="font-size:11px;padding:4px 10px" onclick="toggleAllPerms(true)">Select All</button>
+            <button class="btn-sm btn-outline" style="font-size:11px;padding:4px 10px" onclick="toggleAllPerms(false)">Clear All</button>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
+          <button class="btn-sm btn-outline" onclick="closeUserModal()">Cancel</button>
+          <button class="btn-sm" onclick="saveUser()" id="u-save-btn">✓ Save User</button>
+        </div>
+      </div>
     </div>
     <!-- ORDER ACTION MODAL -->
     <div class="modal-overlay" id="action-modal" style="display:none" onclick="if(event.target===this)closeActionModal()">
@@ -408,7 +483,7 @@ function show(screenId){document.querySelectorAll('.screen').forEach(s=>s.classL
 
 function nav(page){document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));var items=document.querySelectorAll('.nav-item');items.forEach(n=>{if(n.textContent.toLowerCase().includes(page)||n.getAttribute('onclick')?.includes("'"+page+"'")){n.classList.add('active');}});show(page);if(page==='dashboard')loadDash();else if(page==='orders')loadOrders();else if(page==='shipments')renderShipments();else if(page==='sales')loadSales();else if(page==='settings')loadSettings();else if(page==='team')loadUsers();else if(page==='po')loadPOs();else if(page==='cod')loadCOD();else if(page==='ndr')loadNDR();else if(page==='exchanges')loadExchanges();}
 
-async function doLogin(){var btn=document.getElementById('login-btn');var err=document.getElementById('login-err');var em=document.getElementById('email').value;var pw=document.getElementById('password').value;if(!em||!pw){err.textContent='Enter email and password';err.classList.remove('hidden');return;}btn.disabled=true;btn.textContent='Logging in...';err.classList.add('hidden');try{var d=await api('POST','/auth/login',{email:em,password:pw});S.user=d.user;document.getElementById('login-screen').classList.add('hidden');document.getElementById('app-screen').classList.remove('hidden');await loadDash();}catch(e){err.textContent=e.message||'Login failed';err.classList.remove('hidden');}finally{btn.disabled=false;btn.textContent='Login';}}
+async function doLogin(){var btn=document.getElementById('login-btn');var err=document.getElementById('login-err');var em=document.getElementById('email').value;var pw=document.getElementById('password').value;if(!em||!pw){err.textContent='Enter email and password';err.classList.remove('hidden');return;}btn.disabled=true;btn.textContent='Logging in...';err.classList.add('hidden');try{var d=await api('POST','/auth/login',{email:em,password:pw});S.user=d.user;document.getElementById('login-screen').classList.add('hidden');document.getElementById('app-screen').classList.remove('hidden');applyNavPermissions();_ordChannelFilter=getDefaultChannelForUser();await loadDash();}catch(e){err.textContent=e.message||'Login failed';err.classList.remove('hidden');}finally{btn.disabled=false;btn.textContent='Login';}}
 
 async function doLogout(){try{await api('POST','/auth/logout');}catch(e){}S.user=null;S.orders=[];document.getElementById('app-screen').classList.add('hidden');document.getElementById('login-screen').classList.remove('hidden');}
 
@@ -546,8 +621,67 @@ function testShopify(){toast('Testing Shopify...','info');api('GET','/shopify/or
 async function syncProductImages(){var btn=document.getElementById('sync-img-btn');btn.disabled=true;btn.textContent='⏳ Syncing...';try{var d=await api('POST','/products/sync-images');toast('Synced '+d.synced+' product images!','success');}catch(e){toast('Image sync: '+e.message,'error');}finally{btn.disabled=false;btn.textContent='🖼 Sync Product Images';}}
 async function testVelocity(){toast('Testing Velocity...','info');try{await api('GET','/velocity/track');toast('Velocity connected!','success');}catch(e){if(e.message.includes('configured')||e.message.includes('credentials')){toast('Enter your Velocity username and password above','error');}else{toast('Velocity: '+e.message,'error');}}}
 
-async function loadUsers(){try{var d=await api('GET','/users');var items=Array.isArray(d)?d:[];document.getElementById('user-grid').innerHTML=items.map(u=>'<div class="card"><div style="font-weight:700;margin-bottom:4px">'+u.name+'</div><div style="font-size:12px;color:#888;margin-bottom:8px">'+u.email+'</div><div style="font-size:12px;color:#888">'+u.department+' · '+u.role+'</div><span class="badge '+(u.active?'badge-green':'badge-red')+'" style="margin-top:8px;display:inline-block">'+(u.active?'Active':'Inactive')+'</span></div>').join('')||'<p class="loading">No users</p>';}catch(e){toast(e.message,'error');}}
-function openUserModal(){toast('Add user via API - UI form coming soon','info');}
+var _allSections=['dashboard','orders','orders_online','orders_walkin','shipments','cod','ndr','po','sales','marketing','exchanges','team','settings'];
+var _sectionLabels={dashboard:'🏠 Dashboard',orders:'📦 All Orders',orders_online:'🌐 Online Orders',orders_walkin:'🏪 Walk-in Orders',shipments:'🚚 Shipments',cod:'💰 COD & Pay',ndr:'⚠️ NDR',po:'📋 Purchase Orders',sales:'👥 Sales',marketing:'📱 Marketing',exchanges:'🔄 Exchanges',team:'👤 Team',settings:'⚙️ Settings'};
+async function loadUsers(){
+  try{
+    var d=await api('GET','/users');var items=Array.isArray(d)?d:[];
+    document.getElementById('user-grid').innerHTML=items.length?items.map(function(u){
+      var perms=Array.isArray(u.permissions)?u.permissions:[];
+      var isOwner=u.role==='owner';
+      var permsHtml=isOwner?'<div style="font-size:11px;color:#a78bfa;margin-top:6px">✦ Full access (owner)</div>':(perms.length>0?'<div style="font-size:11px;color:#888;margin-top:6px;line-height:1.6">'+perms.map(function(p){return'<span style="background:#1e1e35;border:1px solid #2a2a45;border-radius:4px;padding:1px 5px;margin:2px;display:inline-block">'+(_sectionLabels[p]||p)+'</span>';}).join('')+'</div>':'<div style="font-size:11px;color:#555;margin-top:6px;font-style:italic">No section access</div>');
+      return '<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div style="font-weight:700">'+u.name+'</div><span class="badge '+(u.active?'badge-green':'badge-red')+'" style="font-size:10px">'+(u.active?'Active':'Inactive')+'</span></div><div style="font-size:12px;color:#888;margin-bottom:4px">'+u.email+'</div><div style="font-size:12px;color:#aaa">'+(u.department||'—')+' · <b style="color:#6366f1">'+u.role+'</b></div>'+permsHtml+'<div style="margin-top:10px"><button class="btn-sm btn-outline" style="font-size:11px;padding:4px 8px" onclick="editUser('+JSON.stringify(u).replace(/'/g,"\'")+')">✏ Edit</button></div></div>';
+    }).join(''):'<p class="loading">No users</p>';
+  }catch(e){toast(e.message,'error');}
+}
+function openUserModal(){
+  document.getElementById('u-id').value='';document.getElementById('u-name').value='';document.getElementById('u-email').value='';document.getElementById('u-email').disabled=false;
+  document.getElementById('u-pass').value='';document.getElementById('u-phone').value='';document.getElementById('u-role').value='staff';document.getElementById('u-dept').value='';
+  document.getElementById('u-pass-note').textContent='(required for new)';document.getElementById('user-modal-title').textContent='👤 Add User';
+  document.querySelectorAll('#perm-checkboxes input[type=checkbox]').forEach(function(cb){cb.checked=false;});
+  document.getElementById('user-modal').style.display='flex';
+}
+function editUser(u){
+  document.getElementById('u-id').value=u.id;document.getElementById('u-name').value=u.name||'';document.getElementById('u-email').value=u.email||'';document.getElementById('u-email').disabled=true;
+  document.getElementById('u-pass').value='';document.getElementById('u-phone').value=u.phone||'';document.getElementById('u-role').value=u.role||'staff';document.getElementById('u-dept').value=u.department||'';
+  document.getElementById('u-pass-note').textContent='(leave blank to keep)';document.getElementById('user-modal-title').textContent='✏ Edit User';
+  var perms=Array.isArray(u.permissions)?u.permissions:[];
+  document.querySelectorAll('#perm-checkboxes input[type=checkbox]').forEach(function(cb){cb.checked=perms.includes(cb.value);});
+  document.getElementById('user-modal').style.display='flex';
+}
+function closeUserModal(){document.getElementById('user-modal').style.display='none';}
+function toggleAllPerms(state){document.querySelectorAll('#perm-checkboxes input[type=checkbox]').forEach(function(cb){cb.checked=state;});}
+async function saveUser(){
+  var id=document.getElementById('u-id').value;var name=document.getElementById('u-name').value.trim();var email=document.getElementById('u-email').value.trim();
+  var pass=document.getElementById('u-pass').value;var phone=document.getElementById('u-phone').value.trim();var role=document.getElementById('u-role').value;var dept=document.getElementById('u-dept').value.trim();
+  var permissions=[];document.querySelectorAll('#perm-checkboxes input[type=checkbox]:checked').forEach(function(cb){permissions.push(cb.value);});
+  if(!name||!email){toast('Name and email are required','error');return;}if(!id&&!pass){toast('Password required for new users','error');return;}
+  var btn=document.getElementById('u-save-btn');btn.disabled=true;btn.textContent='Saving...';
+  try{
+    var data={name:name,role:role,department:dept,phone:phone,permissions:permissions};if(pass)data.password=pass;
+    if(id){await api('PUT','/users/'+id,data);}else{data.email=email;await api('POST','/users',data);}
+    toast(id?'User updated!':'User created!','success');closeUserModal();await loadUsers();applyNavPermissions();
+  }catch(e){toast(e.message,'error');}finally{btn.disabled=false;btn.textContent='✓ Save User';}
+}
+function applyNavPermissions(){
+  if(!S.user||S.user.role==='owner')return;
+  var perms=Array.isArray(S.user.permissions)?S.user.permissions:[];
+  document.querySelectorAll('.nav-item[onclick]').forEach(function(el){
+    var match=el.getAttribute('onclick').match(/nav('(w+)')/);if(!match)return;
+    var page=match[1];var req={dashboard:'dashboard',orders:'orders',shipments:'shipments',cod:'cod',ndr:'ndr',po:'po',sales:'sales',marketing:'marketing',exchanges:'exchanges',team:'team',settings:'settings'}[page];
+    if(!req)return;
+    if(page==='orders'){el.style.display=(perms.includes('orders')||perms.includes('orders_online')||perms.includes('orders_walkin'))?'':'none';}
+    else{el.style.display=perms.includes(req)?'':'none';}
+  });
+}
+function getDefaultChannelForUser(){
+  if(!S.user||S.user.role==='owner')return 'all';
+  var perms=Array.isArray(S.user.permissions)?S.user.permissions:[];
+  if(perms.includes('orders'))return 'all';
+  if(perms.includes('orders_online')&&!perms.includes('orders_walkin'))return 'web';
+  if(perms.includes('orders_walkin')&&!perms.includes('orders_online'))return 'pos';
+  return 'all';
+}
 function openProductModal(){toast('Add product via API - UI form coming soon','info');}
 function openExchangeModal(){toast('Add exchange via API - UI form coming soon','info');}
 function exportOrders(){
@@ -645,22 +779,53 @@ async function loadActionHistory(orderId){
 }
 
 // ── EXCHANGES SCREEN ────────────────────────────────────────────────────
+var _exchAll=[], _exchStatusFilter='', _exchTypeFilter='';
+function setExchStatusTab(val,btn){_exchStatusFilter=val;document.querySelectorAll('#exch-status-tabs .tab-btn').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');filterExchanges();}
+function setExchTypeTab(val,btn){_exchTypeFilter=val;document.querySelectorAll('#exch-type-tabs .tab-btn').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');filterExchanges();}
+function filterExchanges(){
+  var search=(document.getElementById('exch-search')?.value||'').toLowerCase();
+  var from=document.getElementById('exch-from')?.value||'';var to=document.getElementById('exch-to')?.value||'';
+  var typeColor={exchange:'badge-blue',return:'badge-red',replace:'badge-orange',cancel_note:'badge-gray'};
+  var typeIcon={exchange:'🔄',return:'↩',replace:'🔁',cancel_note:'✕'};
+  var statusBadge={pending:'badge-orange',in_progress:'badge-blue',resolved:'badge-green',cancelled:'badge-gray'};
+  var items=_exchAll.filter(function(e){
+    if(_exchStatusFilter&&e.status!==_exchStatusFilter)return false;
+    if(_exchTypeFilter&&(e.action_type||'exchange')!==_exchTypeFilter)return false;
+    if(from&&(e.created_at||'').substring(0,10)<from)return false;
+    if(to&&(e.created_at||'').substring(0,10)>to)return false;
+    if(search){var hay=(e.customer_name+e.order_number+e.original_item+e.exchange_item+e.reason+e.remarks).toLowerCase();if(!hay.includes(search))return false;}
+    return true;
+  });
+  document.getElementById('exch-tbody').innerHTML=items.length?items.map(function(e){
+    var at=e.action_type||'exchange';
+    var typeBadge='<span class="badge '+(typeColor[at]||'badge-gray')+'" style="font-size:10px">'+(typeIcon[at]||'')+' '+(at.replace('_',' ')).toUpperCase()+'</span>';
+    var st=e.status||'pending';
+    var statusHtml='<span class="badge '+(statusBadge[st]||'badge-gray')+'" style="font-size:10px">'+st.replace('_',' ').toUpperCase()+'</span>';
+    var actionHtml='<select onchange="updateExchStatus('+e.id+',this.value)" style="background:#0f0f1a;border:1px solid #2a2a45;color:#aaa;padding:3px 6px;border-radius:6px;font-size:11px"><option value="">— Update</option><option value="pending">Pending</option><option value="in_progress">In Progress</option><option value="resolved">Resolved</option><option value="cancelled">Cancelled</option></select>';
+    return '<tr><td>'+e.id+'</td><td>'+(e.created_at||'').substring(0,10)+'</td><td style="font-weight:600">'+e.customer_name+'</td><td style="font-size:12px;color:#888">'+(e.customer_phone||'-')+'</td><td style="font-weight:600;color:#6366f1">'+(e.order_number||'-')+'</td><td style="font-size:12px">'+(e.original_item||'-')+(e.original_size?' / <b>'+e.original_size+'</b>':'')+'</td><td style="font-size:12px">'+(e.exchange_item?'<span style="color:#4ade80">'+e.exchange_item+(e.exchange_size?' / <b>'+e.exchange_size+'</b>':'')+'</span>':'-')+'</td><td>'+typeBadge+'</td><td style="font-size:11px;color:#888;max-width:160px">'+(e.reason||e.remarks||'-')+'</td><td>'+statusHtml+'</td><td>'+actionHtml+'</td></tr>';
+  }).join(''):'<tr><td colspan="11" class="loading">No records match filter</td></tr>';
+}
+async function updateExchStatus(id,status){if(!status)return;try{await api('PUT','/exchanges/'+id,{status:status});toast('Status updated!','success');await loadExchanges();}catch(e){toast(e.message,'error');}}
 async function loadExchanges(){
   try{
-    var d=await api('GET','/exchanges');
-    var items=Array.isArray(d)?d:[];
-    var typeColor={exchange:'badge-blue',return:'badge-red',replace:'badge-orange',cancel_note:'badge-gray'};
-    var typeIcon={exchange:'🔄',return:'↩',replace:'🔁',cancel_note:'✕'};
-    document.getElementById('exch-tbody').innerHTML=items.length?items.map(function(e){
-      var at=e.action_type||'exchange';
-      var typeBadge='<span class="badge '+(typeColor[at]||'badge-gray')+'" style="font-size:10px">'+(typeIcon[at]||'')+' '+(at.replace('_',' ')).toUpperCase()+'</span>';
-      return '<tr><td>'+e.id+'</td><td>'+(e.created_at||'').substring(0,10)+'</td><td>'+e.customer_name+'</td><td style="font-size:12px;color:#888">'+(e.customer_phone||'-')+'</td><td>'+(e.order_number||'-')+'</td><td style="font-size:12px">'+(e.original_item||'-')+(e.original_size?' / <b>'+e.original_size+'</b>':'')+'</td><td style="font-size:12px">'+(e.exchange_item||'-')+(e.exchange_size?' / <b>'+e.exchange_size+'</b>':'')+'</td><td>'+typeBadge+'</td><td style="font-size:11px;color:#888">'+(e.reason||e.remarks||'-')+'</td><td><span class="badge '+(e.status==='resolved'?'badge-green':'badge-orange')+'">'+e.status+'</span></td></tr>';
-    }).join(''):'<tr><td colspan="10" class="loading">No actions recorded</td></tr>';
+    var d=await api('GET','/exchanges');_exchAll=Array.isArray(d)?d:[];
+    var total=_exchAll.length,pending=_exchAll.filter(function(e){return e.status==='pending';}).length,inprog=_exchAll.filter(function(e){return e.status==='in_progress';}).length,resolved=_exchAll.filter(function(e){return e.status==='resolved';}).length;
+    var byType=function(t){return _exchAll.filter(function(e){return(e.action_type||'exchange')===t;}).length;};
+    document.getElementById('exch-stats').innerHTML=[{l:'Total',v:total,c:'blue'},{l:'Pending',v:pending,c:'orange'},{l:'In Progress',v:inprog,c:'blue'},{l:'Resolved',v:resolved,c:'green'},{l:'Exchanges',v:byType('exchange'),c:'purple'},{l:'Returns',v:byType('return'),c:'red'},{l:'Replacements',v:byType('replace'),c:'orange'},{l:'Cancel Notes',v:byType('cancel_note'),c:'gray'}].map(function(x){return'<div class="card"><div class="card-label">'+x.l+'</div><div class="card-val '+x.c+'">'+x.v+'</div></div>';}).join('');
+    filterExchanges();
   }catch(e){toast(e.message,'error');}
+}
+function exportExchanges(){
+  var esc=function(v){return'"'+String(v==null?'':v).replace(/"/g,'""')+'"';};
+  var h=['#','Date','Customer','Phone','Order','Original Item','Size','Exchange To','Exchange Size','Type','Reason','Remarks','Status'];
+  var rows=[h.map(esc).join(',')];
+  _exchAll.forEach(function(e){rows.push([e.id,(e.created_at||'').substring(0,10),e.customer_name,e.customer_phone||'',e.order_number||'',e.original_item||'',e.original_size||'',e.exchange_item||'',e.exchange_size||'',e.action_type||'',e.reason||'',e.remarks||'',e.status||''].map(esc).join(','));});
+  var b=new Blob(['﻿'+rows.join('
+')],{type:'text/csv;charset=utf-8'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='exchanges_'+new Date().toISOString().substring(0,10)+'.csv';a.click();
 }
 
 // Init
-(async function(){try{var d=await api('GET','/auth/me');if(d.user){S.user=d.user;document.getElementById('login-screen').classList.add('hidden');document.getElementById('app-screen').classList.remove('hidden');await loadDash();}}catch(e){}
+(async function(){try{var d=await api('GET','/auth/me');if(d.user){S.user=d.user;document.getElementById('login-screen').classList.add('hidden');document.getElementById('app-screen').classList.remove('hidden');applyNavPermissions();_ordChannelFilter=getDefaultChannelForUser();await loadDash();}}catch(e){}
 document.addEventListener('keydown',function(e){if(e.key==='Enter'&&document.getElementById('login-screen').style.display!=='none'&&!document.getElementById('login-screen').classList.contains('hidden'))doLogin();});})();
 </script>
 </body>
