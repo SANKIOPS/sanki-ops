@@ -667,11 +667,12 @@ function applyNavPermissions(){
   if(!S.user||S.user.role==='owner')return;
   var perms=Array.isArray(S.user.permissions)?S.user.permissions:[];
   document.querySelectorAll('.nav-item[onclick]').forEach(function(el){
-    var match=el.getAttribute('onclick').match(/nav('(w+)')/);if(!match)return;
-    var page=match[1];var req={dashboard:'dashboard',orders:'orders',shipments:'shipments',cod:'cod',ndr:'ndr',po:'po',sales:'sales',marketing:'marketing',exchanges:'exchanges',team:'team',settings:'settings'}[page];
-    if(!req)return;
-    if(page==='orders'){el.style.display=(perms.includes('orders')||perms.includes('orders_online')||perms.includes('orders_walkin'))?'':'none';}
-    else{el.style.display=perms.includes(req)?'':'none';}
+    var match=el.getAttribute('onclick').match(/nav\('(\w+)'\)/);if(!match)return;
+    var page=match[1];
+    if(page==='settings'||page==='team'){el.style.display='none';return;}
+    if(page==='orders'){el.style.display=(perms.includes('orders')||perms.includes('orders_online')||perms.includes('orders_walkin'))?'':'none';return;}
+    var req={dashboard:'dashboard',shipments:'shipments',cod:'cod',ndr:'ndr',po:'po',sales:'sales',marketing:'marketing',exchanges:'exchanges'}[page];
+    el.style.display=perms.includes(req)?'':'none';
   });
 }
 function getDefaultChannelForUser(){
@@ -803,7 +804,7 @@ function filterExchanges(){
     var statusHtml='<span class="badge '+(statusBadge[st]||'badge-gray')+'" style="font-size:10px">'+st.replace('_',' ').toUpperCase()+'</span>';
     var actionHtml='<select onchange="updateExchStatus('+e.id+',this.value)" style="background:#0f0f1a;border:1px solid #2a2a45;color:#aaa;padding:3px 6px;border-radius:6px;font-size:11px"><option value="">— Update</option><option value="pending">Pending</option><option value="in_progress">In Progress</option><option value="resolved">Resolved</option><option value="cancelled">Cancelled</option></select>';
     return '<tr><td>'+e.id+'</td><td>'+(e.created_at||'').substring(0,10)+'</td><td style="font-weight:600">'+e.customer_name+'</td><td style="font-size:12px;color:#888">'+(e.customer_phone||'-')+'</td><td style="font-weight:600;color:#6366f1">'+(e.order_number||'-')+'</td><td style="font-size:12px">'+(e.original_item||'-')+(e.original_size?' / <b>'+e.original_size+'</b>':'')+'</td><td style="font-size:12px">'+(e.exchange_item?'<span style="color:#4ade80">'+e.exchange_item+(e.exchange_size?' / <b>'+e.exchange_size+'</b>':'')+'</span>':'-')+'</td><td>'+typeBadge+'</td><td style="font-size:11px;color:#888;max-width:160px">'+(e.reason||e.remarks||'-')+'</td><td>'+statusHtml+'</td><td>'+actionHtml+'</td></tr>';
-  }).join(''):'<tr><td colspan="11" class="loading">No records match filter</td></tr>';
+  }).join(''):(_exchAll.length===0?'<tr><td colspan="11" class="loading">No exchange records yet — click + Add Exchange above.</td></tr>':'<tr><td colspan="11" class="loading">No records match filter.</td></tr>');
 }
 async function updateExchStatus(id,status){if(!status)return;try{await api('PUT','/exchanges/'+id,{status:status});toast('Status updated!','success');await loadExchanges();}catch(e){toast(e.message,'error');}}
 async function loadExchanges(){
