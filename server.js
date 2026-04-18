@@ -208,6 +208,7 @@ db.exec(`
 // Column migrations (safe to run on every startup)
 try { db.exec("ALTER TABLE exchanges ADD COLUMN action_type TEXT DEFAULT 'exchange'"); } catch(e) {}
 try { db.exec("ALTER TABLE exchanges ADD COLUMN remarks TEXT DEFAULT ''"); } catch(e) {}
+try { db.exec("ALTER TABLE users ADD COLUMN permissions TEXT DEFAULT '[]'"); } catch(e) {}
 
 // Seed admin user
 const uc = db.prepare('SELECT COUNT(*) as c FROM users').get();
@@ -347,8 +348,9 @@ function normalizeVelStatus(s) {
 // ═══ AUTH ════════════════════════════════════════════════════
 app.get('/api/auth/me', (req, res) => {
   if (!req.session.userId) return res.json({ user: null });
-  const u = db.prepare('SELECT id,name,email,role,department FROM users WHERE id=?').get(req.session.userId);
-  res.json({ user: u || null });
+  const u = db.prepare('SELECT id,name,email,role,department,permissions FROM users WHERE id=?').get(req.session.userId);
+  if (!u) return res.json({ user: null });
+  res.json({ user: { ...u, permissions: JSON.parse(u.permissions||'[]') } });
 });
 
 app.post('/api/auth/login', async (req, res) => {
@@ -358,7 +360,7 @@ app.post('/api/auth/login', async (req, res) => {
     if (!u || !bcrypt.compareSync(password, u.password_hash))
       return res.status(401).json({ error: 'Invalid email or password' });
     req.session.userId = u.id;
-    res.json({ user: { id:u.id, name:u.name, email:u.email, role:u.role, department:u.department } });
+    res.json({ user: { id:u.id, name:u.name, email:u.email, role:u.role, department:u.department, permissions: JSON.parse(u.permissions||'[]') } });
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -676,7 +678,7 @@ app.get('/api/orders/list', auth, async (req, res) => {
 
       return {
         id: o.id, name: o.name, date: (o.created_at||'').substring(0,10),
-        customer: o.billing_address?.name || o.customer?.first_name || '-',
+        customer: o.billing_address?.name || [o.customer?.first_name, o.customer?.last_name].filter(Boolean).join(' ') || '-',
         phone: o.billing_address?.phone || o.shipping_address?.phone || o.customer?.phone || '',
         city: o.shipping_address?.city || '',
         state: o.shipping_address?.province || '',
@@ -962,22 +964,34 @@ app.put('/api/po/:id/receive', auth, (req, res) => {
 
 // ═══ SALES & AGENTS ═══════════════════════════════════════════
 app.get('/api/users', auth, (req, res) => {
-  res.json(db.prepare('SELECT id,name,email,role,department,phone,active FROM users ORDER BY name').all());
+  const rows = db.prepare('SELECT id,name,email,role,department,phone,active,permissions FROM users ORDER BY name').all();
+  res.json(rows.map(u => ({ ...u, permissions: JSON.parse(u.permissions||'[]') })));
 });
 
 app.post('/api/users', auth, (req, res) => {
   try {
-    const { name,email,password,role,department,phone } = req.body;
-    const info = db.prepare('INSERT INTO users (name,email,password_hash,role,department,phone) VALUES (?,?,?,?,?,?)').run(name,email,bcrypt.hashSync(password,10),role||'staff',department||'',phone||'');
+    const { name,email,password,role,department,phone,permissions } = req.body;
+    const permsJson = JSON.stringify(Array.isArray(permissions) ? permissions : []);
+    const info = db.prepare('INSERT INTO users (name,email,password_hash,role,department,phone,permissions) VALUES (?,?,?,?,?,?,?)').run(
+      name,email,bcrypt.hashSync(password,10),role||'staff',department||'',phone||'',permsJson
+    );
     res.json({ id:info.lastInsertRowid });
   } catch(e) { res.status(400).json({ error: e.message }); }
 });
 
 app.put('/api/users/:id', auth, (req, res) => {
   try {
-    const { name,role,department,phone,active,password } = req.body;
-    if (password) db.prepare('UPDATE users SET name=?,role=?,department=?,phone=?,active=?,password_hash=? WHERE id=?').run(name,role,department||'',phone||'',active!=null?active:1,bcrypt.hashSync(password,10),req.params.id);
-    else db.prepare('UPDATE users SET name=?,role=?,department=?,phone=?,active=? WHERE id=?').run(name,role,department||'',phone||'',active!=null?active:1,req.params.id);
+    const { name,role,department,phone,active,password,permissions } = req.body;
+    const permsJson = JSON.stringify(Array.isArray(permissions) ? permissions : []);
+    if (password) {
+      db.prepare('UPDATE users SET name=?,role=?,department=?,phone=?,active=?,password_hash=?,permissions=? WHERE id=?').run(
+        name,role,department||'',phone||'',active!=null?active:1,bcrypt.hashSync(password,10),permsJson,req.params.id
+      );
+    } else {
+      db.prepare('UPDATE users SET name=?,role=?,department=?,phone=?,active=?,permissions=? WHERE id=?').run(
+        name,role,department||'',phone||'',active!=null?active:1,permsJson,req.params.id
+      );
+    }
     res.json({ ok:true });
   } catch(e) { res.status(400).json({ error: e.message }); }
 });
