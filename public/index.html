@@ -820,8 +820,7 @@ function exportExchanges(){
   var h=['#','Date','Customer','Phone','Order','Original Item','Size','Exchange To','Exchange Size','Type','Reason','Remarks','Status'];
   var rows=[h.map(esc).join(',')];
   _exchAll.forEach(function(e){rows.push([e.id,(e.created_at||'').substring(0,10),e.customer_name,e.customer_phone||'',e.order_number||'',e.original_item||'',e.original_size||'',e.exchange_item||'',e.exchange_size||'',e.action_type||'',e.reason||'',e.remarks||'',e.status||''].map(esc).join(','));});
-  var b=new Blob(['﻿'+rows.join('
-')],{type:'text/csv;charset=utf-8'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='exchanges_'+new Date().toISOString().substring(0,10)+'.csv';a.click();
+  var b=new Blob(['﻿'+rows.join('\n')],{type:'text/csv;charset=utf-8'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='exchanges_'+new Date().toISOString().substring(0,10)+'.csv';a.click();
 }
 
 // Init
