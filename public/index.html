@@ -222,7 +222,18 @@ tfoot td{border-top:2px solid #2a2a45;background:#1a1a35;font-weight:700;padding
           <button class="chip-btn ds-cancelled" onclick="toggleDeliveryChip('cancelled',this)">Cancelled</button>
         </div>
       </div>
-      <!-- Date + Search -->
+      </div>
+        <div class="filter-tabs-row">
+          <div class="tab-label">Action</div>
+          <div class="tab-group" id="action-tabs">
+            <button class="tab-btn active" onclick="setActionFilter('all',this)">All</button>
+            <button class="tab-btn" onclick="setActionFilter('exchange',this)" style="color:#6366f1">🔄 Exchange</button>
+            <button class="tab-btn" onclick="setActionFilter('return',this)" style="color:#f87171">↩ Return</button>
+            <button class="tab-btn" onclick="setActionFilter('replace',this)" style="color:#f59e0b">🔁 Replace</button>
+            <button class="tab-btn" onclick="setActionFilter('cancel_note',this)" style="color:#9ca3af">📝 Note</button>
+          </div>
+        </div>
+        <!-- Date + Search -->
       <div class="filters" style="margin-top:8px">
         <input type="date" id="ord-from">
         <input type="date" id="ord-to">
@@ -495,6 +506,7 @@ var _ordersFrom = null;
 var _ordChannelFilter = 'all';
 var _ordPaymentFilter = '';
 var _ordDeliveryFilter = [];
+      var _ordActionFilter = 'all';
 
 function dsLabel(s){var m={pending:'Pending',dispatched:'Dispatched',in_transit:'In Transit',out_for_delivery:'Out for Delivery',delivered:'✓ Delivered',fulfilled:'✓ Fulfilled',ndr:'NDR',rto:'RTO',partial:'Partial',cancelled:'Cancelled'};return m[s]||s;}
 
@@ -519,7 +531,13 @@ function toggleDeliveryChip(val,btn){
   loadOrders();
 }
 
-async function loadOrders(reset){
+function setActionFilter(val,btn){
+        _ordActionFilter=val;
+        document.querySelectorAll('#action-tabs .tab-btn').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        loadOrders();
+      }
+      async function loadOrders(reset){
   if(reset!==false) _ordersFrom=null;
   var search=document.getElementById('ord-search')?.value||'';
   var from=document.getElementById('ord-from')?.value||'';
@@ -532,6 +550,7 @@ async function loadOrders(reset){
     if(to) qs+='&to='+to;
     if(search) qs+='&search='+encodeURIComponent(search);
     if(_ordChannelFilter&&_ordChannelFilter!=='all') qs+='&channel='+_ordChannelFilter;
+        if(_ordActionFilter&&_ordActionFilter!=='all') qs+='&action_type='+_ordActionFilter;
     var d=await api('GET',qs);
     var orders=d.orders||[];
     // Client filters
@@ -749,7 +768,7 @@ async function submitOrderAction(){
       exchange_item:document.getElementById('a-exch-item').value,
       exchange_size:document.getElementById('a-exch-size').value
     });
-    toast('Action recorded!','success');
+    toast('Action recorded!','success');loadActionHistory(_actionOrder.id);
     document.getElementById('a-reason').value='';
     document.getElementById('a-remarks').value='';
     loadActionHistory(_actionOrder.id);
