@@ -460,7 +460,7 @@ app.get('/api/shopify/pos-orders', auth, async (req, res) => {
 // Combined orders list: Shopify + Velocity status merged
 app.get('/api/orders/list', auth, async (req, res) => {
   try {
-    const { search, channel } = req.query;
+    const { search, channel, action_type } = req.query;
     const from = req.query.from || '';
     const to = req.query.to || '';
     // Use limit=250 (Shopify max per page) + cursor pagination to get ALL orders in range
@@ -519,6 +519,10 @@ app.get('/api/orders/list', auth, async (req, res) => {
       } catch(e) { txMap[o.id] = 0; }
     }
     // Note: refunded/partially_refunded orders use o.refunds[] directly — no extra API call needed
+
+    // Build action map from exchanges table (latest action per order)
+    const exchangeMap = {};
+    db.prepare('SELECT order_id, action_type, exchange_item, reason FROM exchanges ORDER BY id ASC').all().forEach(e=>{ exchangeMap[String(e.order_id)]=e; });
 
     const enriched = orders.map(o => {
       const awbs = (o.fulfillments||[]).flatMap(f=>f.tracking_numbers||[]).filter(Boolean);
@@ -695,6 +699,9 @@ app.get('/api/orders/list', auth, async (req, res) => {
         package_weight, pkg_summary,
         payment_mode,
         cancelled: isCancelled,
+        action_type: (exchangeMap[String(o.id)]||{}).action_type||null,
+        action_item: (exchangeMap[String(o.id)]||{}).exchange_item||null,
+        action_reason: (exchangeMap[String(o.id)]||{}).reason||null,
       };
     });
 
@@ -706,6 +713,7 @@ app.get('/api/orders/list', auth, async (req, res) => {
       o.items.toLowerCase().includes(q)
     ) : enriched;
     if (channel && channel !== 'all') filtered = filtered.filter(o=>o.channel===channel);
+    if (action_type && action_type !== 'all') filtered = filtered.filter(o=>o.action_type===action_type);
 
     res.json({ orders: filtered, total: filtered.length });
   } catch(e) { res.status(500).json({ error: e.message }); }
