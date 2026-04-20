@@ -1,7 +1,7 @@
  'use strict';
 const express = require('express');
 const Database = require('better-sqlite3');
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs'); 
 const session = require('express-session');
 const fetch = require('node-fetch');
 const path = require('path');
