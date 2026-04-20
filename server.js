@@ -398,7 +398,27 @@ app.get('/api/shopify/orders', auth, async (req, res) => {
     if (fulfillment_status) qs += `&fulfillment_status=${fulfillment_status}`;
     if (financial_status) qs += `&financial_status=${financial_status}`;
     const data = await shopifyFetch(`orders.json?${qs}`);
-    res.json(data);
+    // Enrich: batch-fetch real first_name/last_name where Shopify strips them (e.g. POS orders)
+        const orders = data.orders || [];
+        const missingIds = [...new Set(
+          orders.filter(o => o.customer && o.customer.id && !o.customer.first_name && !o.customer.last_name)
+                .map(o => o.customer.id)
+        )];
+        if (missingIds.length > 0) {
+          try {
+            const custData = await shopifyFetch('customers.json?ids=' + missingIds.join(',') + '&limit=250');
+            const custMap = {};
+            (custData.customers || []).forEach(c => { custMap[c.id] = c; });
+            orders.forEach(o => {
+              if (o.customer && o.customer.id && custMap[o.customer.id]) {
+                const c = custMap[o.customer.id];
+                o.customer.first_name = c.first_name || '';
+                o.customer.last_name = c.last_name || '';
+              }
+            });
+          } catch(_) { /* silently skip enrichment on error */ }
+        }
+        res.json(data);
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
