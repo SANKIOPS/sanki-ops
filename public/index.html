@@ -149,7 +149,7 @@ body{background:#f8f4ec!important;color:#1a2744!important}
 thead tr{background:#1e3a8a!important}
 thead th{color:#fff!important;border-color:#163170!important}
 tbody tr{background:#fff!important;color:#1a2744!important}
-tbody tr:hover{background:#f0f9f5!important}
+tbody tr:hover{background:#1e1e3f!important;color:#fff!important}
 td,th{border-color:#dde5f0!important;color:inherit!important}
 input[type=text],input[type=date],input[type=password],input[type=number],select,textarea{background:#fff!important;color:#1a2744!important;border:1px solid #c9d6eb!important}
 .tab-btn{background:#eef2fb!important;color:#1e3a8a!important;border:1px solid #c9d6eb!important}
@@ -176,7 +176,7 @@ input[type=text],input[type=date],input[type=password],input[type=number],select
 .tab-label{font-size:10px!important;padding:0 4px!important}
 #ord-from,#ord-to{padding:3px 6px!important;font-size:12px!important}
 .date-preset-select{padding:3px 6px!important;font-size:12px!important}
-</style>
+#img-zoom{display:none;position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;align-items:center;justify-content:center;cursor:zoom-out}#img-zoom.on{display:flex}#img-zoom img{max-width:92vw;max-height:92vh;object-fit:contain;border-radius:10px;box-shadow:0 8px 60px rgba(0,0,0,.8)}#img-zoom-close{position:absolute;top:18px;right:24px;color:#fff;font-size:28px;cursor:pointer;opacity:.8}</style>
 </head>
 <body>
 
@@ -638,7 +638,7 @@ function setDatePreset(val){
       var ds='ds-'+(o.delivery||'pending');
       var awbHtml=o.awb?'<a style="color:#059669;font-size:11px">'+o.awb+'</a>':'-';
       // Items with image, name, SKU
-      var itemsHtml=o.line_items&&o.line_items.length?o.line_items.map(function(i){var img=i.image?'<img src="'+i.image+'" style="width:26px;height:26px;object-fit:cover;border-radius:3px;margin-right:5px;flex-shrink:0" onerror="this.style.display=\'none\'">':'';return '<div style="display:flex;align-items:center;margin-bottom:3px">'+img+'<div style="min-width:0"><div style="font-size:11px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:150px">'+(i.name||'Item')+'</div><div style="font-size:10px;color:#6b7280">'+(i.sku||'-')+'&nbsp;&times;'+(i.quantity||1)+'</div></div></div>';}).join(''):(o.items||'-');
+      var itemsHtml=o.line_items&&o.line_items.length?o.line_items.map(function(i){var img=i.image?'<img src="'+i.image+'" style="width:40px;height:40px;object-fit:cover;border-radius:5px;margin-right:7px;flex-shrink:0;cursor:pointer;border:1px solid #2a2a45" onclick="showImgZoom(this.src)" onerror="this.style.display=\'none\'">':'';return '<div style="display:flex;align-items:center;margin-bottom:3px">'+img+'<div style="min-width:0"><div style="font-size:11px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:150px">'+(i.name||'Item')+'</div><div style="font-size:10px;color:#6b7280">'+(i.sku||'-')+'&nbsp;&times;'+(i.quantity||1)+'</div></div></div>';}).join(''):(o.items||'-');
       // Payment badge
       var payColor=o.payment==='Prepaid'?'badge-blue':o.payment==='Partial COD'?'badge-gray':o.payment==='COD (Collected)'?'badge-green':o.payment==='Refunded'||o.payment==='Unpaid'?'badge-red':o.payment==='Partial Refund'?'badge-red':'badge-orange';
       var payBadge='<span class="badge '+payColor+'" style="font-size:10px;white-space:nowrap">'+o.payment+'</span>';
@@ -902,5 +902,5 @@ function exportExchanges(){
 (async function(){try{var d=await api('GET','/auth/me');if(d.user){S.user=d.user;document.getElementById('login-screen').classList.add('hidden');document.getElementById('app-screen').classList.remove('hidden');applyNavPermissions();_ordChannelFilter=getDefaultChannelForUser();await loadDash();}}catch(e){}
 document.addEventListener('keydown',function(e){if(e.key==='Enter'&&document.getElementById('login-screen').style.display!=='none'&&!document.getElementById('login-screen').classList.contains('hidden'))doLogin();});})();
 </script>
-</body>
+<div id="img-zoom" onclick="if(event.target===this)this.classList.remove('on')"><span id="img-zoom-close" onclick="document.getElementById('img-zoom').classList.remove('on')">×</span><img id="img-zoom-img" src=""/></div><script>function showImgZoom(src){var z=document.getElementById('img-zoom');document.getElementById('img-zoom-img').src=src;z.classList.add('on');}document.addEventListener('keydown',function(e){if(e.key==='Escape')document.getElementById('img-zoom')?.classList.remove('on');});</script></body>
 </html>
