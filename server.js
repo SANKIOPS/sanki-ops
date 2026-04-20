@@ -8,7 +8,7 @@ const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-
+ 
 // ═══ DATABASE ═══════════════════════════════════════════════
 const db = new Database(process.env.DB_PATH || './sanki_ops.db');
 db.pragma('journal_mode = WAL');
