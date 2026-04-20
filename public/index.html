@@ -168,6 +168,14 @@ input[type=text],input[type=date],input[type=password],input[type=number],select
 .section-title,.page-title{color:#1e3a8a!important}
 .settings-section h3{color:#1e3a8a!important}
 .date-preset-select{background:#fff!important;color:#1a2744!important;border:1px solid #c9d6eb!important;padding:6px 10px!important;border-radius:6px!important;margin-right:6px!important;font-size:13px!important}
+
+/* Compact filters */
+.filter-tabs-row{margin:2px 0!important;padding:2px 0!important}
+.tab-group{gap:3px!important}
+.tab-btn{padding:3px 8px!important;font-size:11px!important;line-height:1.4!important}
+.tab-label{font-size:10px!important;padding:0 4px!important}
+#ord-from,#ord-to{padding:3px 6px!important;font-size:12px!important}
+.date-preset-select{padding:3px 6px!important;font-size:12px!important}
 </style>
 </head>
 <body>
@@ -630,11 +638,7 @@ function setDatePreset(val){
       var ds='ds-'+(o.delivery||'pending');
       var awbHtml=o.awb?'<a style="color:#059669;font-size:11px">'+o.awb+'</a>':'-';
       // Items with image, name, SKU
-      var itemsHtml=(o.line_items&&o.line_items.length)?o.line_items.map(i=>{
-        var img=i.image?'<img src="'+i.image+'" style="width:38px;height:38px;object-fit:cover;border-radius:5px;margin-right:6px;flex-shrink:0;border:1px solid #dde5f0" onerror="this.style.display=\'none\'">':'';
-        var nameDisplay=i.name.length>38?i.name.substring(0,36)+'…':i.name;
-        return '<div class="item-block" style="display:flex;align-items:center;margin-bottom:4px">'+img+'<div><span style="font-weight:600;color:#e0e0f0">'+nameDisplay+'</span>'+(i.variant_title?'<span style="color:#888;font-size:10px"> — '+i.variant_title+'</span>':'')+'<br>'+(i.sku?'<span style="color:#555;font-size:10px">SKU: '+i.sku+'</span>':'')+'<span style="color:#059669;font-weight:700;font-size:11px;margin-left:4px"> ×'+i.quantity+'</span></div></div>';
-      }).join(''):(o.items||'-');
+      var itemsHtml=(o.line_items&&o.line_items.length)?o.line_items.length?(function(){var i0=o.line_items[0];var img=i0.image?'<img src="'+i0.image+'" style="width:34px;height:34px;object-fit:cover;border-radius:4px;margin-right:6px;flex-shrink:0" onerror="this.style.display=\'none\'">':'';var more=o.line_items.length>1?'<span style="font-size:10px;color:#6b7280;margin-left:4px">+' +(o.line_items.length-1)+'</span>':'';return'<div style="display:flex;align-items:center">'+img+'<div style="min-width:0"><div style="font-size:11px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:140px">'+(i0.name||'Item')+'</div><div style="font-size:10px;color:#6b7280">'+(i0.sku||'-')+'</div>'+more+'</div></div>'})():(o.items||'-');
       // Payment badge
       var payColor=o.payment==='Prepaid'?'badge-blue':o.payment==='Partial COD'?'badge-gray':o.payment==='COD (Collected)'?'badge-green':o.payment==='Refunded'||o.payment==='Unpaid'?'badge-red':o.payment==='Partial Refund'?'badge-red':'badge-orange';
       var payBadge='<span class="badge '+payColor+'" style="font-size:10px;white-space:nowrap">'+o.payment+'</span>';
@@ -650,7 +654,7 @@ function setDatePreset(val){
       // Actions btn
       var actBtn='<button onclick=\'openActionModal('+JSON.stringify(o).replace(/\'/g,"\\'")+')\'  class="btn-sm btn-outline" style="font-size:11px;padding:4px 8px;white-space:nowrap">⋯ Action</button>';
       return'<tr><td><b>'+o.name+'</b></td><td style="white-space:nowrap;font-size:12px">'+o.date+'</td><td>'+o.customer+'</td><td style="font-size:12px;color:#888">'+o.phone+'</td><td>'+o.city+'<br><span style="font-size:10px;color:#666">'+o.state+'</span></td><td style="max-width:220px;max-height:80px;overflow:hidden;vertical-align:top">'+itemsHtml+'</td><td style="white-space:nowrap">₹'+Math.round(o.amount||0).toLocaleString('en-IN')+'</td><td>'+paidHtml+'</td><td>'+balHtml+'</td><td>'+payBadge+'</td><td>'+modeHtml+'</td><td><span class="ds '+ds+'">'+dsLabel(o.delivery)+'</span></td><td style="font-size:11px;color:#aaa">'+(o.courier||'—')+'</td><td style="font-size:11px;color:#aaa">'+pkgHtml+'</td><td style="font-size:11px">'+awbHtml+'</td><td>'+chBadge+'</td><td>'+actBtn+'</td></tr>';
-    }).join('');
+    }).join('');if(tb.rows.length)tb.scrollIntoView({behavior:'smooth',block:'start'});
     // Footer totals
     var tf=document.getElementById('orders-tfoot');
     if(tf) tf.innerHTML='<tr><td colspan="6" style="text-align:right;color:#888">TOTAL — '+orders.length+' orders</td><td>₹'+Math.round(totAmt).toLocaleString('en-IN')+'</td><td style="color:#4ade80">₹'+Math.round(totPaid).toLocaleString('en-IN')+'</td><td style="color:#f87171">₹'+Math.round(totBal).toLocaleString('en-IN')+'</td><td colspan="8"></td></tr>';
