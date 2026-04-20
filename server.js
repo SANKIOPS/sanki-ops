@@ -9,7 +9,7 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
  
-// âââ DATABASE âââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ DATABASE Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 const db = new Database(process.env.DB_PATH || './sanki_ops.db');
 db.pragma('journal_mode = WAL');
 db.pragma('foreign_keys = ON');
@@ -219,7 +219,7 @@ if (uc.c === 0) {
   );
 }
 
-// âââ MIDDLEWARE âââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ MIDDLEWARE Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -235,14 +235,14 @@ const auth = (req, res, next) => {
   next();
 };
 
-// âââ HELPERS ââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ HELPERS Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 const getSetting = (k) => {
   const envMap = { shopify_domain: 'SHOPIFY_DOMAIN', shopify_token: 'SHOPIFY_TOKEN' };
   if (envMap[k] && process.env[envMap[k]]) return process.env[envMap[k]];
   const r = db.prepare('SELECT value FROM settings WHERE key=?').get(k); return r ? r.value : null;
 };
 const setSetting = (k, v) => db.prepare('INSERT OR REPLACE INTO settings (key,value) VALUES (?,?)').run(k, v);
-const fmt = (n) => 'â¹' + Number(n||0).toLocaleString('en-IN');
+const fmt = (n) => 'Ã¢ÂÂ¹' + Number(n||0).toLocaleString('en-IN');
 
 async function shopifyFetch(endpoint, opts = {}) {
   const domain = getSetting('shopify_domain');
@@ -254,7 +254,7 @@ async function shopifyFetch(endpoint, opts = {}) {
   return r.json();
 }
 
-// Cursor-paginated Shopify fetch â follows Link: rel="next" until all orders retrieved (max 1000)
+// Cursor-paginated Shopify fetch Ã¢ÂÂ follows Link: rel="next" until all orders retrieved (max 1000)
 async function shopifyFetchAll(endpoint, maxOrders=1000) {
   const domain = getSetting('shopify_domain');
   const token = getSetting('shopify_token');
@@ -317,7 +317,7 @@ async function getVelocityToken() {
       } catch(e) { lastErr = `${endpoint}: ${e.message}`; }
     }
   }
-  throw new Error(`Velocity auth failed â tried ${authEndpoints.length} endpoints. Last error: ${lastErr}`);
+  throw new Error(`Velocity auth failed Ã¢ÂÂ tried ${authEndpoints.length} endpoints. Last error: ${lastErr}`);
 }
 
 async function velocityFetch(endpoint, opts = {}) {
@@ -350,7 +350,7 @@ function normalizeVelStatus(s) {
   return 'in_transit';
 }
 
-// âââ AUTH ââââââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ AUTH Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 app.get('/api/auth/me', (req, res) => {
   if (!req.session.userId) return res.json({ user: null });
   const u = db.prepare('SELECT id,name,email,role,department,permissions FROM users WHERE id=?').get(req.session.userId);
@@ -371,7 +371,7 @@ app.post('/api/auth/login', async (req, res) => {
 
 app.post('/api/auth/logout', (req, res) => { req.session.destroy(); res.json({ ok: true }); });
 
-// âââ SETTINGS ââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ SETTINGS Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 app.get('/api/settings', auth, (req, res) => {
   const keys = ['shopify_domain','shopify_token','velocity_username','velocity_password','velocity_base_url','company_name','currency','commission_default'];
   const out = {};
@@ -389,7 +389,7 @@ app.post('/api/settings', auth, (req, res) => {
   res.json({ ok: true });
 });
 
-// âââ SHOPIFY PROXY ââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ SHOPIFY PROXY Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 app.get('/api/shopify/orders', auth, async (req, res) => {
   try {
     const { status='any', limit=250, created_at_min, fulfillment_status, financial_status } = req.query;
@@ -566,7 +566,7 @@ app.get('/api/orders/list', auth, async (req, res) => {
         txMap[o.id] = Math.max(0, paid - refunded);
       } catch(e) { txMap[o.id] = 0; }
     }
-    // Note: refunded/partially_refunded orders use o.refunds[] directly â no extra API call needed
+    // Note: refunded/partially_refunded orders use o.refunds[] directly Ã¢ÂÂ no extra API call needed
 
     // Build action map from exchanges table (latest action per order)
     const exchangeMap = {};
@@ -590,7 +590,7 @@ app.get('/api/orders/list', auth, async (req, res) => {
       } else if (ndr && !ndr.resolved) {
         delivery = 'ndr';
       } else if (o.fulfillment_status === 'fulfilled') {
-        // Fix #16: Walk-in (POS) customers collect in-store â use 'fulfilled', not 'dispatched'
+        // Fix #16: Walk-in (POS) customers collect in-store Ã¢ÂÂ use 'fulfilled', not 'dispatched'
         if ((o.source_name||'').toLowerCase() === 'pos') {
           delivery = 'fulfilled';
         } else {
@@ -648,7 +648,7 @@ app.get('/api/orders/list', auth, async (req, res) => {
         // Use cached product image first, then Shopify inline image if any
         image: imageCache[String(i.variant_id)] || i.image?.src || null,
       }));
-      const items = line_items.map(i=>`${i.name} Ã${i.quantity}`).join(', ');
+      const items = line_items.map(i=>`${i.name} ÃÂ${i.quantity}`).join(', ');
 
       // FIX 2: Payment type & correct paid/balance amounts
       const totalPrice = parseFloat(o.total_price||0);
@@ -660,11 +660,11 @@ app.get('/api/orders/list', auth, async (req, res) => {
       let paid_amount = 0, balance_amount = 0;
 
       if (o.financial_status === 'refunded') {
-        // Full refund â money returned to customer
+        // Full refund Ã¢ÂÂ money returned to customer
         paymentType = 'Refunded';
         paid_amount = 0; balance_amount = 0;
       } else if (o.financial_status === 'partially_refunded') {
-        // Partial refund â calculate net amount still retained
+        // Partial refund Ã¢ÂÂ calculate net amount still retained
         paymentType = 'Partial Refund';
         const totalRefunded = (o.refunds||[]).reduce((sum, r) => {
           const lineTotal = (r.refund_line_items||[]).reduce((s, li) => s + parseFloat(li.subtotal||0), 0);
@@ -673,7 +673,7 @@ app.get('/api/orders/list', auth, async (req, res) => {
           return sum + lineTotal + shipTotal;
         }, 0);
         paid_amount = Math.max(0, totalPrice - totalRefunded);
-        balance_amount = 0; // No balance to collect â customer already paid, we refunded part
+        balance_amount = 0; // No balance to collect Ã¢ÂÂ customer already paid, we refunded part
       } else if (o.financial_status === 'paid') {
         // Fully paid (COD collected or prepaid)
         paid_amount = totalPrice; balance_amount = 0;
@@ -681,7 +681,7 @@ app.get('/api/orders/list', auth, async (req, res) => {
         // Use actual transaction data (online advance paid)
         paid_amount = txMap[o.id] !== undefined ? txMap[o.id] : 0;
         balance_amount = Math.max(0, totalPrice - paid_amount);
-        // FIX 2: If Velocity confirms delivery â COD balance also collected, clear balance
+        // FIX 2: If Velocity confirms delivery Ã¢ÂÂ COD balance also collected, clear balance
         if (cached && cached.status === 'delivered') {
           paid_amount = totalPrice; balance_amount = 0;
           paymentType = 'COD (Collected)';
@@ -700,7 +700,7 @@ app.get('/api/orders/list', auth, async (req, res) => {
           paid_amount = 0; balance_amount = totalPrice;
         }
       } else if (['pending', 'authorized', 'voided'].includes(o.financial_status)) {
-        // Fix #13: Online order not yet paid â must not show as paid
+        // Fix #13: Online order not yet paid Ã¢ÂÂ must not show as paid
         paid_amount = 0; balance_amount = totalPrice;
         paymentType = 'Unpaid';
       } else {
@@ -708,14 +708,14 @@ app.get('/api/orders/list', auth, async (req, res) => {
         paid_amount = totalPrice; balance_amount = 0;
       }
 
-      // FIX 1: Package details â Velocity cache first, then Shopify order weight, then line item grams
+      // FIX 1: Package details Ã¢ÂÂ Velocity cache first, then Shopify order weight, then line item grams
       let package_weight = parseFloat(cached?.weight||0);
       if (!package_weight) {
         // Shopify's total_weight is in grams
         if (o.total_weight && o.total_weight > 0) {
           package_weight = parseFloat(o.total_weight) / 1000;
         } else {
-          // Sum individual line item weights (grams Ã qty)
+          // Sum individual line item weights (grams ÃÂ qty)
           const lineGrams = (o.line_items||[]).reduce((sum, i) => sum + ((parseFloat(i.grams)||0) * (i.quantity||1)), 0);
           if (lineGrams > 0) package_weight = lineGrams / 1000;
         }
@@ -730,7 +730,7 @@ app.get('/api/orders/list', auth, async (req, res) => {
 
       return {
         id: o.id, name: o.name, date: (o.created_at||'').substring(0,10),
-        customer: o.billing_address?.name || o.billing_address?.first_name || o.shipping_address?.name || o.shipping_address?.first_name || '-',
+        customer: o.billing_address?.name || o.billing_address?.first_name || o.shipping_address?.name || o.shipping_address?.first_name || (o.source_name==='pos' ? o.note : null) || '-',
         phone: o.billing_address?.phone || o.shipping_address?.phone || o.customer?.phone || '',
         city: o.shipping_address?.city || '',
         state: o.shipping_address?.province || '',
@@ -767,7 +767,7 @@ app.get('/api/orders/list', auth, async (req, res) => {
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
-// âââ VELOCITY PROXY ââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ VELOCITY PROXY Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 // Test endpoint (GET) - just verifies auth works
 app.get('/api/velocity/track', auth, async (req, res) => {
   try {
@@ -939,7 +939,7 @@ app.post('/api/sync/orders', auth, async (req, res) => {
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
-// âââ DASHBOARD ââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ DASHBOARD Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 app.get('/api/dashboard', auth, async (req, res) => {
   try {
     const today = new Date().toISOString().substring(0,10);
@@ -959,7 +959,7 @@ app.get('/api/dashboard', auth, async (req, res) => {
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
-// âââ PURCHASE ORDERS ââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ PURCHASE ORDERS Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 app.get('/api/po', auth, (req, res) => {
   const { status } = req.query;
   let q = 'SELECT po.*, (SELECT COUNT(*) FROM po_items WHERE po_id=po.id) as item_count FROM purchase_orders po WHERE 1=1';
@@ -1018,7 +1018,7 @@ app.put('/api/po/:id/receive', auth, (req, res) => {
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
-// âââ SALES & AGENTS âââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ SALES & AGENTS Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 app.get('/api/users', auth, (req, res) => {
   const rows = db.prepare('SELECT id,name,email,role,department,phone,active,permissions FROM users ORDER BY name').all();
   res.json(rows.map(u => ({ ...u, permissions: JSON.parse(u.permissions||'[]') })));
@@ -1098,7 +1098,7 @@ app.get('/api/sales/summary', auth, (req, res) => {
   res.json(rows);
 });
 
-// âââ EXCHANGES ââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ EXCHANGES Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 app.get('/api/exchanges', auth, (req, res) => {
   const { status } = req.query;
   let q = 'SELECT e.*,u.name as agent_name FROM exchanges e LEFT JOIN users u ON e.assigned_to=u.id WHERE 1=1';
@@ -1129,7 +1129,7 @@ app.put('/api/exchanges/:id', auth, (req, res) => {
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
-// âââ MARKETING ââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ MARKETING Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 app.get('/api/marketing', auth, (req, res) => {
   const { ig_status, category } = req.query;
   let q = 'SELECT * FROM marketing_tracker WHERE 1=1';
@@ -1162,7 +1162,7 @@ app.put('/api/marketing/:id', auth, (req, res) => {
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
-// âââ COD LEDGER âââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ COD LEDGER Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 app.get('/api/cod', auth, (req, res) => {
   const { from, to, status } = req.query;
   let q = 'SELECT * FROM cod_ledger WHERE 1=1';
@@ -1193,7 +1193,7 @@ app.put('/api/cod/:awb/mark-credited', auth, (req, res) => {
   res.json({ ok:true });
 });
 
-// âââ NDR MANAGEMENT âââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ NDR MANAGEMENT Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 app.get('/api/ndr', auth, (req, res) => {
   const { resolved } = req.query;
   let q = 'SELECT * FROM ndr_log WHERE 1=1';
@@ -1212,7 +1212,7 @@ app.put('/api/ndr/:id', auth, (req, res) => {
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
-// âââ ORDER NOTES ââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ ORDER NOTES Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 app.get('/api/orders/:order_id/notes', auth, (req, res) => {
   const notes = db.prepare('SELECT n.*,u.name as user_name FROM order_notes n LEFT JOIN users u ON n.created_by=u.id WHERE n.order_id=? ORDER BY n.created_at DESC').all(req.params.order_id);
   res.json(notes);
@@ -1226,7 +1226,7 @@ app.post('/api/orders/:order_id/notes', auth, (req, res) => {
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
-// âââ EXPORT CSV ââââââââââââââââââââââââââââââââââââââââââââââââ
+// Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂ EXPORT CSV Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
 app.get('/api/export/orders', auth, async (req, res) => {
   try {
     const { from, to } = req.query;
