@@ -1299,23 +1299,21 @@ app.get('/api/export/orders', auth, async (req, res) => {
 
 
 // TEMP DEBUG ROUTE
-app.get('/api/debug-gql', async (req, res) => {
+app.get('/api/debug-rest', async (req, res) => {
   try {
-    const domain = getSetting('shopify_domain');
-    const token = getSetting('shopify_token');
-    const testId = req.query.id || '9067599364348';
-    const gid = 'gid://shopify/Customer/' + testId;
-    const gqlQuery = '{ nodes(ids: ["' + gid + '"]) { ... on Customer { id firstName lastName displayName } } }';
-    const gqlResp = await fetch('https://' + domain + '/admin/api/2024-01/graphql.json', {
-      method: 'POST',
-      headers: { 'X-Shopify-Access-Token': token, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query: gqlQuery })
+    const custId = req.query.id || '9067599364348';
+    const custData = await shopifyFetch('customers/' + custId + '.json');
+    const orderData = await shopifyFetch('orders.json' + '?customer_id=' + custId + '&limit=1&status=any');
+    const firstOrder = (orderData.orders || [])[0] || {};
+    res.json({
+      customer_raw: custData.customer || custData,
+      order_billing: firstOrder.billing_address,
+      order_shipping: firstOrder.shipping_address,
+      order_email: firstOrder.email,
+      order_note_attrs: firstOrder.note_attributes,
+      order_customer_keys: firstOrder.customer ? Object.keys(firstOrder.customer) : []
     });
-    const gqlData = await gqlResp.json();
-    res.json({ domain: domain ? domain.slice(0,10)+'...' : null, hasToken: !!token, query: gqlQuery, response: gqlData });
-  } catch(e) {
-    res.status(500).json({ error: e.message, stack: e.stack });
-  }
+  } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
 app.listen(PORT, () => console.log(`SANKI OPS running on port ${PORT}`));
