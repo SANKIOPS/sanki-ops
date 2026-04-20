@@ -398,7 +398,7 @@ app.get('/api/shopify/orders', auth, async (req, res) => {
     if (fulfillment_status) qs += `&fulfillment_status=${fulfillment_status}`;
     if (financial_status) qs += `&financial_status=${financial_status}`;
     const data = await shopifyFetch(`orders.json?${qs}`);
-    // Enrich: batch-fetch real first_name/last_name where Shopify strips them (e.g. POS orders)
+    // Enrich: use GraphQL to get real customer names (REST API strips names for POS customers)
         const orders = data.orders || [];
         const missingIds = [...new Set(
           orders.filter(o => o.customer && o.customer.id && !o.customer.first_name && !o.customer.last_name)
@@ -406,19 +406,33 @@ app.get('/api/shopify/orders', auth, async (req, res) => {
         )];
         if (missingIds.length > 0) {
           try {
-            const custData = await shopifyFetch('customers.json?ids=' + missingIds.join(',') + '&limit=250');
+            const domain = getSetting('shopify_domain');
+            const token = getSetting('shopify_token');
+            const gids = missingIds.map(id => 'gid://shopify/Customer/' + id);
+            const gqlQuery = '{ nodes(ids: ' + JSON.stringify(gids) + ') { ... on Customer { id firstName lastName displayName } } }';
+            const gqlResp = await fetch('https://' + domain + '/admin/api/2024-01/graphql.json', {
+              method: 'POST',
+              headers: { 'X-Shopify-Access-Token': token, 'Content-Type': 'application/json' },
+              body: JSON.stringify({ query: gqlQuery })
+            });
+            const gqlData = await gqlResp.json();
             const custMap = {};
-            (custData.customers || []).forEach(c => { custMap[c.id] = c; });
+            ((gqlData.data && gqlData.data.nodes) || []).forEach(c => {
+              if (c && c.id) {
+                const numId = parseInt(c.id.split('/').pop(), 10);
+                custMap[numId] = c;
+              }
+            });
             orders.forEach(o => {
               if (o.customer && o.customer.id && custMap[o.customer.id]) {
                 const c = custMap[o.customer.id];
-                o.customer.first_name = c.first_name || '';
-                o.customer.last_name = c.last_name || '';
+                o.customer.first_name = c.firstName || c.displayName || '';
+                o.customer.last_name = c.lastName || '';
               }
             });
           } catch(_) { /* silently skip enrichment on error */ }
         }
-        res.json(data);
+                res.json(data);
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -568,9 +582,18 @@ app.get('/api/orders/list', auth, async (req, res) => {
         try {
           for (let ci = 0; ci < missing.length; ci += 250) {
             const batch = missing.slice(ci, ci+250);
-            const custData = await shopifyFetch('customers.json?ids=' + batch.join(',') + '&fields=id,first_name,last_name&limit=250');
+            const domain = getSetting('shopify_domain');
+            const token = getSetting('shopify_token');
+            const gids = batch.map(id => 'gid://shopify/Customer/' + id);
+            const gqlQ = '{ nodes(ids: ' + JSON.stringify(gids) + ') { ... on Customer { id firstName lastName displayName } } }';
+            const gqlR = await fetch('https://' + domain + '/admin/api/2024-01/graphql.json', {
+              method: 'POST',
+              headers: { 'X-Shopify-Access-Token': token, 'Content-Type': 'application/json' },
+              body: JSON.stringify({ query: gqlQ })
+            });
+            const gqlData = await gqlR.json();
             const cstmt = db.prepare('INSERT OR REPLACE INTO customer_names (id,name) VALUES (?,?)');
-            (custData.customers||[]).forEach(c => { const nm = [c.first_name,c.last_name].filter(Boolean).join(' ')||'-'; customerMap[c.id]=nm; cstmt.run(c.id,nm); });
+            ((gqlData.data && gqlData.data.nodes) || []).forEach(c => { if (!c || !c.id) return; const numId = parseInt(c.id.split('/').pop(), 10); const nm = [c.firstName, c.lastName].filter(Boolean).join(' ') || c.displayName || '-'; customerMap[numId]=nm; cstmt.run(numId,nm); });
           }
         } catch(e) {}
       }
