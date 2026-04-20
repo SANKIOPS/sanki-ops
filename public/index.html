@@ -183,7 +183,7 @@ input[type=text],input[type=date],input[type=password],input[type=number],select
 <!-- LOGIN -->
 <div id="login-screen">
   <div class="login-box">
-    <div class="login-logo">Ã¢ÂÂ¡ SANKI OPS</div>
+    <div class="login-logo">ÃÂ¢ÃÂÃÂ¡ SANKI OPS</div>
     <div class="login-sub">Fashion Brand Operations Platform</div>
     <div class="form-group"><label>Email</label><input type="email" id="email" placeholder="admin@sanki.in" autocomplete="email"></div>
     <div class="form-group"><label>Password</label><input type="password" id="password" placeholder="Password" autocomplete="current-password"></div>
@@ -195,25 +195,25 @@ input[type=text],input[type=date],input[type=password],input[type=number],select
 <!-- APP -->
 <div id="app-screen" class="hidden">
   <div class="sidebar">
-    <div class="sidebar-brand">Ã¢ÂÂ¡ SANKI OPS</div>
-    <div class="nav-item active" onclick="nav('dashboard')">Ã°ÂÂÂ  Dashboard</div>
-    <div class="nav-item" onclick="nav('orders')">Ã°ÂÂÂ¦ Orders</div>
-    <div class="nav-item" onclick="nav('shipments')">Ã°ÂÂÂ Shipments</div>
-    <div class="nav-item" onclick="nav('cod')">Ã°ÂÂÂ° COD & Pay</div>
-    <div class="nav-item" onclick="nav('ndr')">Ã¢ÂÂ Ã¯Â¸Â NDR</div>
-    <div class="nav-item" onclick="nav('po')">Ã°ÂÂÂ Purchase Orders</div>
-    <div class="nav-item" onclick="nav('sales')">Ã°ÂÂÂ¥ Sales</div>
-    <div class="nav-item" onclick="nav('marketing')">Ã°ÂÂÂ± Marketing</div>
-    <div class="nav-item" onclick="nav('exchanges')">Ã°ÂÂÂ Exchanges</div>
-    <div class="nav-item" onclick="nav('team')">Ã°ÂÂÂ¤ Team</div>
-    <div class="nav-item" onclick="nav('settings')">Ã¢ÂÂÃ¯Â¸Â Settings</div>
-    <div class="nav-logout" onclick="doLogout()">Ã¢ÂÂ© Logout</div>
+    <div class="sidebar-brand">ÃÂ¢ÃÂÃÂ¡ SANKI OPS</div>
+    <div class="nav-item active" onclick="nav('dashboard')">ÃÂ°ÃÂÃÂÃÂ  Dashboard</div>
+    <div class="nav-item" onclick="nav('orders')">ÃÂ°ÃÂÃÂÃÂ¦ Orders</div>
+    <div class="nav-item" onclick="nav('shipments')">ÃÂ°ÃÂÃÂÃÂ Shipments</div>
+    <div class="nav-item" onclick="nav('cod')">ÃÂ°ÃÂÃÂÃÂ° COD & Pay</div>
+    <div class="nav-item" onclick="nav('ndr')">ÃÂ¢ÃÂÃÂ ÃÂ¯ÃÂ¸ÃÂ NDR</div>
+    <div class="nav-item" onclick="nav('po')">ÃÂ°ÃÂÃÂÃÂ Purchase Orders</div>
+    <div class="nav-item" onclick="nav('sales')">ÃÂ°ÃÂÃÂÃÂ¥ Sales</div>
+    <div class="nav-item" onclick="nav('marketing')">ÃÂ°ÃÂÃÂÃÂ± Marketing</div>
+    <div class="nav-item" onclick="nav('exchanges')">ÃÂ°ÃÂÃÂÃÂ Exchanges</div>
+    <div class="nav-item" onclick="nav('team')">ÃÂ°ÃÂÃÂÃÂ¤ Team</div>
+    <div class="nav-item" onclick="nav('settings')">ÃÂ¢ÃÂÃÂÃÂ¯ÃÂ¸ÃÂ Settings</div>
+    <div class="nav-logout" onclick="doLogout()">ÃÂ¢ÃÂÃÂ© Logout</div>
   </div>
   <div class="main">
     <div id="toast-container"></div>
     <!-- DASHBOARD -->
     <div class="screen active" id="screen-dashboard">
-      <div class="page-title">Dashboard <button class="btn-sm" onclick="syncOrders()" id="sync-btn">Ã°ÂÂÂ Sync</button></div>
+      <div class="page-title">Dashboard <button class="btn-sm" onclick="syncOrders()" id="sync-btn">ÃÂ°ÃÂÃÂÃÂ Sync</button></div>
       <div class="cards" id="dash-alerts"></div>
       <div class="cards" id="dash-stats"></div>
       <div class="table-wrap">
@@ -232,8 +232,8 @@ input[type=text],input[type=date],input[type=password],input[type=number],select
         <div class="tab-label">Channel</div>
         <div class="tab-group" id="channel-tabs">
           <button class="tab-btn active" onclick="setChannelTab('all',this)">All</button>
-          <button class="tab-btn" onclick="setChannelTab('web',this)">Ã°ÂÂÂ Online</button>
-          <button class="tab-btn" onclick="setChannelTab('pos',this)">Ã°ÂÂÂª Walk-in</button>
+          <button class="tab-btn" onclick="setChannelTab('web',this)">ÃÂ°ÃÂÃÂÃÂ Online</button>
+          <button class="tab-btn" onclick="setChannelTab('pos',this)">ÃÂ°ÃÂÃÂÃÂª Walk-in</button>
         </div>
       </div>
       <!-- Payment Tabs -->
@@ -244,12 +244,12 @@ input[type=text],input[type=date],input[type=password],input[type=number],select
           <button class="tab-btn" onclick="setPaymentTab('Prepaid',this)">Prepaid</button>
           <button class="tab-btn" onclick="setPaymentTab('COD',this)">COD</button>
           <button class="tab-btn" onclick="setPaymentTab('Partial COD',this)">Partial COD</button>
-          <button class="tab-btn" onclick="setPaymentTab('Refunded',this)" style="color:#f87171">Ã¢ÂÂ© Refunded</button>
-          <button class="tab-btn" onclick="setPaymentTab('Partial Refund',this)" style="color:#fb923c">Ã¦Â¦Â Partial Refund</button>
-          <button class="tab-btn" onclick="setPaymentTab('Unpaid',this)" style="color:#f87171">Ã¢ÂÂ  Unpaid</button>
-          <button class="tab-btn active red" id="pending-pay-tab" onclick="setPaymentTab('pending_balance',this)" style="display:none">Ã¢ÂÂ  Pending Payment</button>
+          <button class="tab-btn" onclick="setPaymentTab('Refunded',this)" style="color:#f87171">ÃÂ¢ÃÂÃÂ© Refunded</button>
+          <button class="tab-btn" onclick="setPaymentTab('Partial Refund',this)" style="color:#fb923c">ÃÂ¦ÃÂ¦ÃÂ Partial Refund</button>
+          <button class="tab-btn" onclick="setPaymentTab('Unpaid',this)" style="color:#f87171">ÃÂ¢ÃÂÃÂ  Unpaid</button>
+          <button class="tab-btn active red" id="pending-pay-tab" onclick="setPaymentTab('pending_balance',this)" style="display:none">ÃÂ¢ÃÂÃÂ  Pending Payment</button>
         </div>
-        <button class="tab-btn" style="margin-left:8px" onclick="setPaymentTab('pending_balance',document.getElementById('pending-pay-tab'))">Ã¢ÂÂ  Pending Balance</button>
+        <button class="tab-btn" style="margin-left:8px" onclick="setPaymentTab('pending_balance',document.getElementById('pending-pay-tab'))">ÃÂ¢ÃÂÃÂ  Pending Balance</button>
       </div>
       <!-- Delivery Status Chips -->
       <div class="filter-tabs-row">
@@ -259,8 +259,8 @@ input[type=text],input[type=date],input[type=password],input[type=number],select
           <button class="chip-btn ds-dispatched" onclick="toggleDeliveryChip('dispatched',this)">Dispatched</button>
           <button class="chip-btn ds-in_transit" onclick="toggleDeliveryChip('in_transit',this)">In Transit</button>
           <button class="chip-btn ds-out_for_delivery" onclick="toggleDeliveryChip('out_for_delivery',this)">Out for Delivery</button>
-          <button class="chip-btn ds-delivered" onclick="toggleDeliveryChip('delivered',this)">Ã¢ÂÂ Delivered</button>
-          <button class="chip-btn ds-fulfilled" onclick="toggleDeliveryChip('fulfilled',this)">Ã¢ÂÂ Fulfilled</button>
+          <button class="chip-btn ds-delivered" onclick="toggleDeliveryChip('delivered',this)">ÃÂ¢ÃÂÃÂ Delivered</button>
+          <button class="chip-btn ds-fulfilled" onclick="toggleDeliveryChip('fulfilled',this)">ÃÂ¢ÃÂÃÂ Fulfilled</button>
           <button class="chip-btn ds-ndr" onclick="toggleDeliveryChip('ndr',this)">NDR</button>
           <button class="chip-btn ds-rto" onclick="toggleDeliveryChip('rto',this)">RTO</button>
           <button class="chip-btn ds-cancelled" onclick="toggleDeliveryChip('cancelled',this)">Cancelled</button>
@@ -271,20 +271,20 @@ input[type=text],input[type=date],input[type=password],input[type=number],select
           <div class="tab-label">Action</div>
           <div class="tab-group" id="action-tabs">
             <button class="tab-btn active" onclick="setActionFilter('all',this)">All</button>
-            <button class="tab-btn" onclick="setActionFilter('exchange',this)" style="color:#059669">Ã°ÂÂÂ Exchange</button>
-            <button class="tab-btn" onclick="setActionFilter('return',this)" style="color:#f87171">Ã¢ÂÂ© Return</button>
-            <button class="tab-btn" onclick="setActionFilter('replace',this)" style="color:#f59e0b">Ã°ÂÂÂ Replace</button>
-            <button class="tab-btn" onclick="setActionFilter('cancel_note',this)" style="color:#9ca3af">Ã°ÂÂÂ Note</button>
+            <button class="tab-btn" onclick="setActionFilter('exchange',this)" style="color:#059669">ÃÂ°ÃÂÃÂÃÂ Exchange</button>
+            <button class="tab-btn" onclick="setActionFilter('return',this)" style="color:#f87171">ÃÂ¢ÃÂÃÂ© Return</button>
+            <button class="tab-btn" onclick="setActionFilter('replace',this)" style="color:#f59e0b">ÃÂ°ÃÂÃÂÃÂ Replace</button>
+            <button class="tab-btn" onclick="setActionFilter('cancel_note',this)" style="color:#9ca3af">ÃÂ°ÃÂÃÂÃÂ Note</button>
           </div>
         </div>
         <!-- Date + Search -->
       <div class="filters" style="margin-top:8px">
-        <select class="date-preset-select" onchange="setDatePreset(this.value)" id="date-preset"><option value="">Ã°ÂÂÂ Quick Range</option><option value="today">Today</option><option value="yesterday">Yesterday</option><option value="last7">Last 7 Days</option><option value="last15">Last 15 Days</option><option value="last30">Last 30 Days</option></select>
+        <select class="date-preset-select" onchange="setDatePreset(this.value)" id="date-preset"><option value="">ÃÂ°ÃÂÃÂÃÂ Quick Range</option><option value="today">Today</option><option value="yesterday">Yesterday</option><option value="last7">Last 7 Days</option><option value="last15">Last 15 Days</option><option value="last30">Last 30 Days</option></select>
         <input type="date" id="ord-from" onchange="loadOrders()">
         <input type="date" id="ord-to" onchange="loadOrders()">
         <input type="text" id="ord-search" placeholder="Order / customer / AWB / city / SKU" style="width:240px">
-        <button cclass="btn-sm" onclick="loadOrders()">Ã°ÂÂÂ Search</button>
-        <button class="btn-sm btn-outline" onclick="exportOrders()">Ã°ÂÂÂ¥ Export</button>
+        <button cclass="btn-sm" onclick="loadOrders()">ÃÂ°ÃÂÃÂÃÂ Search</button>
+        <button class="btn-sm btn-outline" onclick="exportOrders()">ÃÂ°ÃÂÃÂÃÂ¥ Export</button>
       </div>
       <!-- Table -->
       <div class="table-wrap" style="overflow-x:auto">
@@ -318,7 +318,7 @@ input[type=text],input[type=date],input[type=password],input[type=number],select
     </div>
     <!-- COD -->
     <div class="screen" id="screen-cod">
-      <div class="page-title">COD & Payments <button class="btn-sm btn-outline" onclick="exportCOD()">Ã°ÂÂÂ¥ Export</button></div>
+      <div class="page-title">COD & Payments <button class="btn-sm btn-outline" onclick="exportCOD()">ÃÂ°ÃÂÃÂÃÂ¥ Export</button></div>
       <div class="cards" id="cod-stats"></div>
       <div class="table-wrap">
         <table><thead><tr><th>AWB</th><th>Order</th><th>Customer</th><th>COD Amt</th><th>Vel Charges</th><th>Net</th><th>Remittance ID</th><th>Bank Credited</th></tr></thead>
@@ -383,21 +383,21 @@ input[type=text],input[type=date],input[type=password],input[type=number],select
         <div class="tab-label">Type</div>
         <div class="tab-group" id="exch-type-tabs">
           <button class="tab-btn active" onclick="setExchTypeTab('',this)">All</button>
-          <button class="tab-btn" onclick="setExchTypeTab('exchange',this)" style="color:#059669">Ã°ÂÂÂ Exchange</button>
-          <button class="tab-btn" onclick="setExchTypeTab('return',this)" style="color:#f87171">Ã¢ÂÂ© Return</button>
-          <button class="tab-btn" onclick="setExchTypeTab('replace',this)" style="color:#fb923c">Ã°ÂÂÂ Replace</button>
-          <button class="tab-btn" onclick="setExchTypeTab('cancel_note',this)" style="color:#9ca3af">Ã¢ÂÂ Cancel Note</button>
+          <button class="tab-btn" onclick="setExchTypeTab('exchange',this)" style="color:#059669">ÃÂ°ÃÂÃÂÃÂ Exchange</button>
+          <button class="tab-btn" onclick="setExchTypeTab('return',this)" style="color:#f87171">ÃÂ¢ÃÂÃÂ© Return</button>
+          <button class="tab-btn" onclick="setExchTypeTab('replace',this)" style="color:#fb923c">ÃÂ°ÃÂÃÂÃÂ Replace</button>
+          <button class="tab-btn" onclick="setExchTypeTab('cancel_note',this)" style="color:#9ca3af">ÃÂ¢ÃÂÃÂ Cancel Note</button>
         </div>
       </div>
       <div class="filters" style="margin-top:4px">
         <input type="text" id="exch-search" placeholder="Search order / customer..." style="width:220px" oninput="filterExchanges()">
         <input type="date" id="exch-from" onchange="filterExchanges()">
         <input type="date" id="exch-to" onchange="filterExchanges()">
-        <button class="btn-sm btn-outline" onclick="exportExchanges()">Ã°ÂÂÂ¥ Export</button>
+        <button class="btn-sm btn-outline" onclick="exportExchanges()">ÃÂ°ÃÂÃÂÃÂ¥ Export</button>
       </div>
       <div class="table-wrap" style="overflow-x:auto">
         <table style="min-width:960px"><thead><tr><th>#</th><th>Date</th><th>Customer</th><th>Phone</th><th>Order</th><th>Original Item</th><th>Exchange To</th><th>Type</th><th>Reason / Notes</th><th>Status</th><th>Action</th></tr></thead>
-        <tbody id="exch-tbody"><tr><td colspan="11" class="loading">No actions recorded Ã¢ÂÂ use the Ã¢ÂÂ¯ Action button on any order</td></tr></tbody>
+        <tbody id="exch-tbody"><tr><td colspan="11" class="loading">No actions recorded ÃÂ¢ÃÂÃÂ use the ÃÂ¢ÃÂÃÂ¯ Action button on any order</td></tr></tbody>
         </table>
       </div>
     </div>
@@ -410,8 +410,8 @@ input[type=text],input[type=date],input[type=password],input[type=number],select
     <div class="modal-overlay" id="user-modal" style="display:none" onclick="if(event.target===this)closeUserModal()">
       <div class="modal-box">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-          <h3 style="font-size:16px;font-weight:700" id="user-modal-title">Ã°ÂÂÂ¤ Add User</h3>
-          <button onclick="closeUserModal()" style="background:none;border:none;color:#888;font-size:22px;cursor:pointer;line-height:1">Ã¢ÂÂ</button>
+          <h3 style="font-size:16px;font-weight:700" id="user-modal-title">ÃÂ°ÃÂÃÂÃÂ¤ Add User</h3>
+          <button onclick="closeUserModal()" style="background:none;border:none;color:#888;font-size:22px;cursor:pointer;line-height:1">ÃÂ¢ÃÂÃÂ</button>
         </div>
         <input type="hidden" id="u-id">
         <div class="modal-2col">
@@ -429,19 +429,19 @@ input[type=text],input[type=date],input[type=password],input[type=number],select
         <div class="modal-field" style="margin-top:4px">
           <label style="margin-bottom:10px;display:block">Section Access <span style="color:#555;font-size:10px">(Owner = all access)</span></label>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px" id="perm-checkboxes">
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #dde5f0;border-radius:6px"><input type="checkbox" value="dashboard"> Ã°ÂÂÂ  Dashboard</label>
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #dde5f0;border-radius:6px"><input type="checkbox" value="orders"> Ã°ÂÂÂ¦ All Orders</label>
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #dde5f0;border-radius:6px"><input type="checkbox" value="orders_online"> Ã°ÂÂÂ Online Orders</label>
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #dde5f0;border-radius:6px"><input type="checkbox" value="orders_walkin"> Ã°ÂÂÂª Walk-in Orders</label>
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #dde5f0;border-radius:6px"><input type="checkbox" value="shipments"> Ã°ÂÂÂ Shipments</label>
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #dde5f0;border-radius:6px"><input type="checkbox" value="cod"> Ã°ÂÂÂ° COD & Pay</label>
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #dde5f0;border-radius:6px"><input type="checkbox" value="ndr"> Ã¢ÂÂ Ã¯Â¸Â NDR</label>
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #dde5f0;border-radius:6px"><input type="checkbox" value="po"> Ã°ÂÂÂ Purchase Orders</label>
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #dde5f0;border-radius:6px"><input type="checkbox" value="sales"> Ã°ÂÂÂ¥ Sales</label>
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #dde5f0;border-radius:6px"><input type="checkbox" value="marketing"> Ã°ÂÂÂ± Marketing</label>
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #dde5f0;border-radius:6px"><input type="checkbox" value="exchanges"> Ã°ÂÂÂ Exchanges</label>
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #dde5f0;border-radius:6px"><input type="checkbox" value="team"> Ã°ÂÂÂ¤ Team</label>
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #dde5f0;border-radius:6px"><input type="checkbox" value="settings"> Ã¢ÂÂÃ¯Â¸Â Settings</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #dde5f0;border-radius:6px"><input type="checkbox" value="dashboard"> ÃÂ°ÃÂÃÂÃÂ  Dashboard</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #dde5f0;border-radius:6px"><input type="checkbox" value="orders"> ÃÂ°ÃÂÃÂÃÂ¦ All Orders</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #dde5f0;border-radius:6px"><input type="checkbox" value="orders_online"> ÃÂ°ÃÂÃÂÃÂ Online Orders</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #dde5f0;border-radius:6px"><input type="checkbox" value="orders_walkin"> ÃÂ°ÃÂÃÂÃÂª Walk-in Orders</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #dde5f0;border-radius:6px"><input type="checkbox" value="shipments"> ÃÂ°ÃÂÃÂÃÂ Shipments</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #dde5f0;border-radius:6px"><input type="checkbox" value="cod"> ÃÂ°ÃÂÃÂÃÂ° COD & Pay</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #dde5f0;border-radius:6px"><input type="checkbox" value="ndr"> ÃÂ¢ÃÂÃÂ ÃÂ¯ÃÂ¸ÃÂ NDR</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #dde5f0;border-radius:6px"><input type="checkbox" value="po"> ÃÂ°ÃÂÃÂÃÂ Purchase Orders</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #dde5f0;border-radius:6px"><input type="checkbox" value="sales"> ÃÂ°ÃÂÃÂÃÂ¥ Sales</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #dde5f0;border-radius:6px"><input type="checkbox" value="marketing"> ÃÂ°ÃÂÃÂÃÂ± Marketing</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #dde5f0;border-radius:6px"><input type="checkbox" value="exchanges"> ÃÂ°ÃÂÃÂÃÂ Exchanges</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #dde5f0;border-radius:6px"><input type="checkbox" value="team"> ÃÂ°ÃÂÃÂÃÂ¤ Team</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:#ccc;padding:6px 8px;border:1px solid #dde5f0;border-radius:6px"><input type="checkbox" value="settings"> ÃÂ¢ÃÂÃÂÃÂ¯ÃÂ¸ÃÂ Settings</label>
           </div>
           <div style="margin-top:8px;display:flex;gap:8px">
             <button class="btn-sm btn-outline" style="font-size:11px;padding:4px 10px" onclick="toggleAllPerms(true)">Select All</button>
@@ -450,7 +450,7 @@ input[type=text],input[type=date],input[type=password],input[type=number],select
         </div>
         <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
           <button class="btn-sm btn-outline" onclick="closeUserModal()">Cancel</button>
-          <button class="btn-sm" onclick="saveUser()" id="u-save-btn">Ã¢ÂÂ Save User</button>
+          <button class="btn-sm" onclick="saveUser()" id="u-save-btn">ÃÂ¢ÃÂÃÂ Save User</button>
         </div>
       </div>
     </div>
@@ -458,17 +458,17 @@ input[type=text],input[type=date],input[type=password],input[type=number],select
     <div class="modal-overlay" id="action-modal" style="display:none" onclick="if(event.target===this)closeActionModal()">
       <div class="modal-box">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-          <h3 style="font-size:16px;font-weight:700">Ã°ÂÂÂ Order Action</h3>
-          <button onclick="closeActionModal()" style="background:none;border:none;color:#888;font-size:22px;cursor:pointer;line-height:1">Ã¢ÂÂ</button>
+          <h3 style="font-size:16px;font-weight:700">ÃÂ°ÃÂÃÂÃÂ Order Action</h3>
+          <button onclick="closeActionModal()" style="background:none;border:none;color:#888;font-size:22px;cursor:pointer;line-height:1">ÃÂ¢ÃÂÃÂ</button>
         </div>
         <div id="action-order-info" style="background:#0f0f1a;border-radius:8px;padding:12px;margin-bottom:16px;font-size:13px;color:#aaa;line-height:1.6"></div>
         <div class="modal-field">
           <label>Action Type</label>
           <div style="display:flex;gap:8px;flex-wrap:wrap" id="action-type-btns">
-            <button class="tab-btn active" onclick="selectActionType('exchange',this)" style="color:#059669">Ã°ÂÂÂ Exchange</button>
-            <button class="tab-btn" onclick="selectActionType('return',this)" style="color:#f87171">Ã¢ÂÂ© Return</button>
-            <button class="tab-btn" onclick="selectActionType('replace',this)" style="color:#fb923c">Ã°ÂÂÂ Replace (Same)</button>
-            <button class="tab-btn" onclick="selectActionType('cancel_note',this)" style="color:#9ca3af">Ã¢ÂÂ Cancel Note</button>
+            <button class="tab-btn active" onclick="selectActionType('exchange',this)" style="color:#059669">ÃÂ°ÃÂÃÂÃÂ Exchange</button>
+            <button class="tab-btn" onclick="selectActionType('return',this)" style="color:#f87171">ÃÂ¢ÃÂÃÂ© Return</button>
+            <button class="tab-btn" onclick="selectActionType('replace',this)" style="color:#fb923c">ÃÂ°ÃÂÃÂÃÂ Replace (Same)</button>
+            <button class="tab-btn" onclick="selectActionType('cancel_note',this)" style="color:#9ca3af">ÃÂ¢ÃÂÃÂ Cancel Note</button>
           </div>
         </div>
         <div id="action-item-fields">
@@ -485,7 +485,7 @@ input[type=text],input[type=date],input[type=password],input[type=number],select
         <div class="modal-field"><label>Remarks / Notes</label><textarea id="a-remarks" rows="3" placeholder="Any additional notes, customer requests, special instructions..."></textarea></div>
         <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px">
           <button class="btn-sm btn-outline" onclick="closeActionModal()">Cancel</button>
-          <button class="btn-sm" onclick="submitOrderAction()" id="action-submit-btn">Ã¢ÂÂ Record Action</button>
+          <button class="btn-sm" onclick="submitOrderAction()" id="action-submit-btn">ÃÂ¢ÃÂÃÂ Record Action</button>
         </div>
         <div id="action-history" style="margin-top:20px"></div>
       </div>
@@ -494,18 +494,18 @@ input[type=text],input[type=date],input[type=password],input[type=number],select
     <div class="screen" id="screen-settings">
       <div class="page-title">Settings</div>
       <div class="settings-section">
-        <div class="settings-title">Ã°ÂÂÂ Shopify</div>
+        <div class="settings-title">ÃÂ°ÃÂÃÂÃÂ Shopify</div>
         <div class="settings-row">
           <div><label>Store Domain</label><input type="text" id="s-domain" placeholder="xxx.myshopify.com"></div>
-          <div><label>Access Token</label><input type="password" id="s-token" placeholder="Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢Ã¢ÂÂ¢"></div>
+          <div><label>Access Token</label><input type="password" id="s-token" placeholder="ÃÂ¢ÃÂÃÂ¢ÃÂ¢ÃÂÃÂ¢ÃÂ¢ÃÂÃÂ¢ÃÂ¢ÃÂÃÂ¢ÃÂ¢ÃÂÃÂ¢ÃÂ¢ÃÂÃÂ¢ÃÂ¢ÃÂÃÂ¢ÃÂ¢ÃÂÃÂ¢ÃÂ¢ÃÂÃÂ¢ÃÂ¢ÃÂÃÂ¢ÃÂ¢ÃÂÃÂ¢ÃÂ¢ÃÂÃÂ¢"></div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
           <button class="btn-sm" onclick="testShopify()">Test Shopify</button>
-          <button class="btn-sm btn-outline" onclick="syncProductImages()" id="sync-img-btn">Ã°ÂÂÂ¼ Sync Product Images</button>
+          <button class="btn-sm btn-outline" onclick="syncProductImages()" id="sync-img-btn">ÃÂ°ÃÂÃÂÃÂ¼ Sync Product Images</button>
         </div>
       </div>
       <div class="settings-section">
-        <div class="settings-title">Ã°ÂÂÂ Velocity Express</div>
+        <div class="settings-title">ÃÂ°ÃÂÃÂÃÂ Velocity Express</div>
         <div class="settings-row">
           <div><label>Mobile / Username</label><input type="text" id="v-user" placeholder="+91XXXXXXXXXX"></div>
           <div><label>Password</label><input type="password" id="v-pass" placeholder="Velocity portal password"></div>
@@ -517,13 +517,13 @@ input[type=text],input[type=date],input[type=password],input[type=number],select
         <button class="btn-sm" onclick="testVelocity()">Test Velocity</button>
       </div>
       <div class="settings-section">
-        <div class="settings-title">Ã°ÂÂÂ¢ Company</div>
+        <div class="settings-title">ÃÂ°ÃÂÃÂÃÂ¢ Company</div>
         <div class="settings-row">
           <div><label>Company Name</label><input type="text" id="c-name" value="SANKI Fashion"></div>
           <div><label>Default Commission %</label><input type="number" id="c-comm" value="5" min="0" max="100" step="0.1"></div>
         </div>
       </div>
-      <button class="btn-sm" onclick="saveSettings()">Ã°ÂÂÂ¾ Save Settings</button>
+      <button class="btn-sm" onclick="saveSettings()">ÃÂ°ÃÂÃÂÃÂ¾ Save Settings</button>
     </div>
   </div>
 </div>
@@ -543,9 +543,9 @@ async function doLogin(){var btn=document.getElementById('login-btn');var err=do
 
 async function doLogout(){try{await api('POST','/auth/logout');}catch(e){}S.user=null;S.orders=[];document.getElementById('app-screen').classList.add('hidden');document.getElementById('login-screen').classList.remove('hidden');}
 
-async function syncOrders(){var btn=document.getElementById('sync-btn');btn.disabled=true;btn.textContent='Ã¢ÂÂ³ Syncing...';try{await api('POST','/sync/orders',{days:30});toast('Synced!','success');await loadDash();}catch(e){toast(e.message,'error');}finally{btn.disabled=false;btn.textContent='Ã°ÂÂÂ Sync';}}
+async function syncOrders(){var btn=document.getElementById('sync-btn');btn.disabled=true;btn.textContent='ÃÂ¢ÃÂÃÂ³ Syncing...';try{await api('POST','/sync/orders',{days:30});toast('Synced!','success');await loadDash();}catch(e){toast(e.message,'error');}finally{btn.disabled=false;btn.textContent='ÃÂ°ÃÂÃÂÃÂ Sync';}}
 
-async function loadDash(){try{var[dash,ords]=await Promise.all([api('GET','/dashboard'),api('GET','/shopify/orders?limit=20')]);var a=document.getElementById('dash-alerts');a.innerHTML=[{l:'NDR Pending',v:dash.ndr_pending,c:'red'},{l:'COD Pending',v:'Ã¢ÂÂ¹'+(dash.cod_pending_amount||0).toLocaleString('en-IN'),c:'orange'},{l:'Exchanges',v:dash.exchanges_pending,c:'purple'},{l:'POs Active',v:dash.pos_in_transit,c:'blue'}].map(x=>'<div class="card"><div class="card-label">'+x.l+'</div><div class="card-val '+x.c+'">'+x.v+'</div></div>').join('');var orders=(ords.orders||[]);S.orders=orders;var tb=document.getElementById('dash-orders');if(!orders.length){tb.innerHTML='<tr><td colspan="6" class="loading">No orders found. Configure Shopify in Settings first.</td></tr>';return;}tb.innerHTML=orders.slice(0,15).map(o=>{var awb=(o.fulfillments||[]).flatMap(f=>f.tracking_numbers||[]).join(', ')||'-';return'<tr><td>'+o.name+'</td><td>'+(o.created_at||'').substring(0,10)+'</td><td>'+(o.customer||'-')+'</td><td>Ã¢ÂÂ¹'+parseFloat(o.total_price||0).toLocaleString('en-IN')+'</td><td><span class="badge '+(o.fulfillment_status==='fulfilled'?'badge-green':o.fulfillment_status?'badge-blue':'badge-orange')+'">'+(o.fulfillment_status||'pending')+'</span></td><td>'+awb+'</td></tr>';}).join('');}catch(e){if(e.message&&e.message.includes('configured')){document.getElementById('dash-orders').innerHTML='<tr><td colspan="6" style="text-align:center;padding:20px;color:#f97316">Ã¢ÂÂÃ¯Â¸Â Go to Settings to add your Shopify credentials first</td></tr>';}else{toast(e.message,'error');}}}
+async function loadDash(){try{var[dash,ords]=await Promise.all([api('GET','/dashboard'),api('GET','/shopify/orders?limit=20')]);var a=document.getElementById('dash-alerts');a.innerHTML=[{l:'NDR Pending',v:dash.ndr_pending,c:'red'},{l:'COD Pending',v:'ÃÂ¢ÃÂÃÂ¹'+(dash.cod_pending_amount||0).toLocaleString('en-IN'),c:'orange'},{l:'Exchanges',v:dash.exchanges_pending,c:'purple'},{l:'POs Active',v:dash.pos_in_transit,c:'blue'}].map(x=>'<div class="card"><div class="card-label">'+x.l+'</div><div class="card-val '+x.c+'">'+x.v+'</div></div>').join('');var orders=(ords.orders||[]);S.orders=orders;var tb=document.getElementById('dash-orders');if(!orders.length){tb.innerHTML='<tr><td colspan="6" class="loading">No orders found. Configure Shopify in Settings first.</td></tr>';return;}tb.innerHTML=orders.slice(0,15).map(o=>{var awb=(o.fulfillments||[]).flatMap(f=>f.tracking_numbers||[]).join(', ')||'-';return'<tr><td>'+o.name+'</td><td>'+(o.created_at||'').substring(0,10)+'</td><td>'+(o.customer||'-')+'</td><td>ÃÂ¢ÃÂÃÂ¹'+parseFloat(o.total_price||0).toLocaleString('en-IN')+'</td><td><span class="badge '+(o.fulfillment_status==='fulfilled'?'badge-green':o.fulfillment_status?'badge-blue':'badge-orange')+'">'+(o.fulfillment_status||'pending')+'</span></td><td>'+awb+'</td></tr>';}).join('');}catch(e){if(e.message&&e.message.includes('configured')){document.getElementById('dash-orders').innerHTML='<tr><td colspan="6" style="text-align:center;padding:20px;color:#f97316">ÃÂ¢ÃÂÃÂÃÂ¯ÃÂ¸ÃÂ Go to Settings to add your Shopify credentials first</td></tr>';}else{toast(e.message,'error');}}}
 
 var _ordersFrom = null;
 var _ordChannelFilter = 'all';
@@ -553,7 +553,7 @@ var _ordPaymentFilter = '';
 var _ordDeliveryFilter = [];
       var _ordActionFilter = 'all';
 
-function dsLabel(s){var m={pending:'Pending',dispatched:'Dispatched',in_transit:'In Transit',out_for_delivery:'Out for Delivery',delivered:'Ã¢ÂÂ Delivered',fulfilled:'Ã¢ÂÂ Fulfilled',ndr:'NDR',rto:'RTO',partial:'Partial',cancelled:'Cancelled'};return m[s]||s;}
+function dsLabel(s){var m={pending:'Pending',dispatched:'Dispatched',in_transit:'In Transit',out_for_delivery:'Out for Delivery',delivered:'ÃÂ¢ÃÂÃÂ Delivered',fulfilled:'ÃÂ¢ÃÂÃÂ Fulfilled',ndr:'NDR',rto:'RTO',partial:'Partial',cancelled:'Cancelled'};return m[s]||s;}
 
 function setChannelTab(val,btn){
   _ordChannelFilter=val;
@@ -624,9 +624,9 @@ function setDatePreset(val){
     document.getElementById('orders-count').textContent='('+orders.length+' orders)';
     document.getElementById('orders-summary').innerHTML=[
       {l:'Total Orders',v:orders.length,c:'blue'},
-      {l:'Total Value',v:'Ã¢ÂÂ¹'+Math.round(totAmt).toLocaleString('en-IN'),c:'green'},
-      {l:'Collected',v:'Ã¢ÂÂ¹'+Math.round(totPaid).toLocaleString('en-IN'),c:'green'},
-      {l:'Balance Due',v:'Ã¢ÂÂ¹'+Math.round(totBal).toLocaleString('en-IN'),c:'red'},
+      {l:'Total Value',v:'ÃÂ¢ÃÂÃÂ¹'+Math.round(totAmt).toLocaleString('en-IN'),c:'green'},
+      {l:'Collected',v:'ÃÂ¢ÃÂÃÂ¹'+Math.round(totPaid).toLocaleString('en-IN'),c:'green'},
+      {l:'Balance Due',v:'ÃÂ¢ÃÂÃÂ¹'+Math.round(totBal).toLocaleString('en-IN'),c:'red'},
       {l:'COD',v:orders.filter(o=>o.payment==='COD').length,c:'orange'},
       {l:'Partial COD',v:orders.filter(o=>o.payment==='Partial COD').length,c:'orange'},
       {l:'Prepaid',v:orders.filter(o=>o.payment==='Prepaid').length,c:'purple'},
@@ -638,27 +638,27 @@ function setDatePreset(val){
       var ds='ds-'+(o.delivery||'pending');
       var awbHtml=o.awb?'<a style="color:#059669;font-size:11px">'+o.awb+'</a>':'-';
       // Items with image, name, SKU
-      var itemsHtml=o.line_items&&o.line_items.length?o.line_items.map(function(i){var img=i.image?'<img src="'+i.image+'" style="width:26px;height:26px;object-fit:cover;border-radius:3px;margin-right:5px;flex-shrink:0" onerror="this.style.display=\'none\'">':\'\';return '<div style="display:flex;align-items:center;margin-bottom:3px">'+img+'<div style="min-width:0"><div style="font-size:11px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:150px">'+(i.name||'Item')+'</div><div style="font-size:10px;color:#6b7280">'+(i.sku||'-')+'&nbsp;&times;'+(i.quantity||1)+'</div></div></div>';}).join(''):(o.items||'-');
+      var itemsHtml=o.line_items&&o.line_items.length?o.line_items.map(function(i){var img=i.image?'<img src="'+i.image+'" style="width:26px;height:26px;object-fit:cover;border-radius:3px;margin-right:5px;flex-shrink:0" onerror="this.style.display=\'none\'">':'';return '<div style="display:flex;align-items:center;margin-bottom:3px">'+img+'<div style="min-width:0"><div style="font-size:11px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:150px">'+(i.name||'Item')+'</div><div style="font-size:10px;color:#6b7280">'+(i.sku||'-')+'&nbsp;&times;'+(i.quantity||1)+'</div></div></div>';}).join(''):(o.items||'-');
       // Payment badge
       var payColor=o.payment==='Prepaid'?'badge-blue':o.payment==='Partial COD'?'badge-gray':o.payment==='COD (Collected)'?'badge-green':o.payment==='Refunded'||o.payment==='Unpaid'?'badge-red':o.payment==='Partial Refund'?'badge-red':'badge-orange';
       var payBadge='<span class="badge '+payColor+'" style="font-size:10px;white-space:nowrap">'+o.payment+'</span>';
       // Payment mode
-      var modeHtml=o.payment_mode?'<span style="font-size:10px;color:#888">'+o.payment_mode+'</span>':'<span style="color:#333;font-size:10px">Ã¢ÂÂ</span>';
+      var modeHtml=o.payment_mode?'<span style="font-size:10px;color:#888">'+o.payment_mode+'</span>':'<span style="color:#333;font-size:10px">ÃÂ¢ÃÂÃÂ</span>';
       // Paid / Balance
-      var paidHtml=o.paid_amount>0?'<span style="color:#4ade80;font-size:12px;font-weight:700">Ã¢ÂÂ¹'+Math.round(o.paid_amount).toLocaleString('en-IN')+'</span>':'<span style="color:#444;font-size:11px">Ã¢ÂÂ</span>';
-      var balHtml=o.balance_amount>0?'<span style="color:#f87171;font-size:12px;font-weight:700">Ã¢ÂÂ¹'+Math.round(o.balance_amount).toLocaleString('en-IN')+'</span>':'<span style="color:#4ade80;font-size:11px">Ã¢ÂÂ Paid</span>';
+      var paidHtml=o.paid_amount>0?'<span style="color:#4ade80;font-size:12px;font-weight:700">ÃÂ¢ÃÂÃÂ¹'+Math.round(o.paid_amount).toLocaleString('en-IN')+'</span>':'<span style="color:#444;font-size:11px">ÃÂ¢ÃÂÃÂ</span>';
+      var balHtml=o.balance_amount>0?'<span style="color:#f87171;font-size:12px;font-weight:700">ÃÂ¢ÃÂÃÂ¹'+Math.round(o.balance_amount).toLocaleString('en-IN')+'</span>':'<span style="color:#4ade80;font-size:11px">ÃÂ¢ÃÂÃÂ Paid</span>';
       // Channel
       var chBadge=o.channel==='pos'?'<span class="badge badge-purple" style="font-size:10px">Walk-in</span>':'<span class="badge badge-gray" style="font-size:10px">Online</span>';
       // Package
-      var pkgHtml=o.pkg_summary||'Ã¢ÂÂ';
+      var pkgHtml=o.pkg_summary||'ÃÂ¢ÃÂÃÂ';
       // Actions btn
-      var actBtn='<button onclick=\'openActionModal('+JSON.stringify(o).replace(/\'/g,"\\'")+')\'  class="btn-sm btn-outline" style="font-size:11px;padding:4px 8px;white-space:nowrap">Ã¢ÂÂ¯ Action</button>';
-      return'<tr><td><b>'+o.name+'</b></td><td style="white-space:nowrap;font-size:12px">'+o.date+'</td><td>'+o.customer+'</td><td style="font-size:12px;color:#888">'+o.phone+'</td><td>'+o.city+'<br><span style="font-size:10px;color:#666">'+o.state+'</span></td><td style="max-width:220px;max-height:80px;overflow:hidden;vertical-align:top">'+itemsHtml+'</td><td style="white-space:nowrap">Ã¢ÂÂ¹'+Math.round(o.amount||0).toLocaleString('en-IN')+'</td><td>'+paidHtml+'</td><td>'+balHtml+'</td><td>'+payBadge+'</td><td>'+modeHtml+'</td><td><span class="ds '+ds+'">'+dsLabel(o.delivery)+'</span></td><td style="font-size:11px;color:#aaa">'+(o.courier||'Ã¢ÂÂ')+'</td><td style="font-size:11px;color:#aaa">'+pkgHtml+'</td><td style="font-size:11px">'+awbHtml+'</td><td>'+chBadge+'</td><td>'+actBtn+'</td></tr>';
+      var actBtn='<button onclick=\'openActionModal('+JSON.stringify(o).replace(/\'/g,"\\'")+')\'  class="btn-sm btn-outline" style="font-size:11px;padding:4px 8px;white-space:nowrap">ÃÂ¢ÃÂÃÂ¯ Action</button>';
+      return'<tr><td><b>'+o.name+'</b></td><td style="white-space:nowrap;font-size:12px">'+o.date+'</td><td>'+o.customer+'</td><td style="font-size:12px;color:#888">'+o.phone+'</td><td>'+o.city+'<br><span style="font-size:10px;color:#666">'+o.state+'</span></td><td style="max-width:220px;max-height:80px;overflow:hidden;vertical-align:top">'+itemsHtml+'</td><td style="white-space:nowrap">ÃÂ¢ÃÂÃÂ¹'+Math.round(o.amount||0).toLocaleString('en-IN')+'</td><td>'+paidHtml+'</td><td>'+balHtml+'</td><td>'+payBadge+'</td><td>'+modeHtml+'</td><td><span class="ds '+ds+'">'+dsLabel(o.delivery)+'</span></td><td style="font-size:11px;color:#aaa">'+(o.courier||'ÃÂ¢ÃÂÃÂ')+'</td><td style="font-size:11px;color:#aaa">'+pkgHtml+'</td><td style="font-size:11px">'+awbHtml+'</td><td>'+chBadge+'</td><td>'+actBtn+'</td></tr>';
     }).join('');if(tb.rows.length)tb.scrollIntoView({behavior:'smooth',block:'start'});
     // Footer totals
     var tf=document.getElementById('orders-tfoot');
-    if(tf) tf.innerHTML='<tr><td colspan="6" style="text-align:right;color:#888">TOTAL Ã¢ÂÂ '+orders.length+' orders</td><td>Ã¢ÂÂ¹'+Math.round(totAmt).toLocaleString('en-IN')+'</td><td style="color:#4ade80">Ã¢ÂÂ¹'+Math.round(totPaid).toLocaleString('en-IN')+'</td><td style="color:#f87171">Ã¢ÂÂ¹'+Math.round(totBal).toLocaleString('en-IN')+'</td><td colspan="8"></td></tr>';
-    // With cursor pagination, all orders in range are already loaded Ã¢ÂÂ hide load-more
+    if(tf) tf.innerHTML='<tr><td colspan="6" style="text-align:right;color:#888">TOTAL ÃÂ¢ÃÂÃÂ '+orders.length+' orders</td><td>ÃÂ¢ÃÂÃÂ¹'+Math.round(totAmt).toLocaleString('en-IN')+'</td><td style="color:#4ade80">ÃÂ¢ÃÂÃÂ¹'+Math.round(totPaid).toLocaleString('en-IN')+'</td><td style="color:#f87171">ÃÂ¢ÃÂÃÂ¹'+Math.round(totBal).toLocaleString('en-IN')+'</td><td colspan="8"></td></tr>';
+    // With cursor pagination, all orders in range are already loaded ÃÂ¢ÃÂÃÂ hide load-more
     document.getElementById('load-more-wrap').style.display='none';
   }catch(e){tb.innerHTML='<tr><td colspan="17" style="color:#f87171;text-align:center;padding:20px">'+e.message+'</td></tr>';}
 }
@@ -672,53 +672,53 @@ async function loadMoreOrders(){
 }
 
 function filterOrders(){loadOrders();}
-function renderShipments(){var orders=S.orders;var filter=document.getElementById('ship-filter')?.value;var stats={in_transit:0,out_for_delivery:0,delivered:0,ndr:0,rto:0};orders.forEach(o=>{var s=o.fulfillment_status==='fulfilled'?'delivered':o.fulfillment_status?'in_transit':'in_transit';if(stats[s]!==undefined)stats[s]++;});document.getElementById('ship-stats').innerHTML=Object.entries({In_Transit:'in_transit',OFD:'out_for_delivery',Delivered:'delivered',NDR:'ndr',RTO:'rto'}).map(([l,k])=>'<div class="card"><div class="card-label">'+l.replace('_',' ')+'</div><div class="card-val '+(k==='ndr'?'red':k==='delivered'?'green':k==='rto'?'orange':'blue')+'">'+stats[k]+'</div></div>').join('');var filt=filter?orders.filter(o=>{var s=o.fulfillment_status==='fulfilled'?'delivered':o.fulfillment_status?'in_transit':'in_transit';return s===filter;}):orders;document.getElementById('ship-tbody').innerHTML=filt.length?filt.map(o=>{var awb=(o.fulfillments||[]).flatMap(f=>f.tracking_numbers||[]).join(', ')||'-';var s=o.fulfillment_status==='fulfilled'?'delivered':o.fulfillment_status?'in_transit':'pending';var cod=o.payment_gateway_names?.some(p=>p.toLowerCase().includes('cod'))?'Ã¢ÂÂ¹'+parseFloat(o.total_price||0).toLocaleString('en-IN'):'-';return'<tr><td>'+awb+'</td><td>'+o.name+'</td><td>'+(o.billing_address?.name||'-')+'</td><td>'+(o.shipping_address?.city||'-')+'</td><td><span class="badge badge-blue">'+s+'</span></td><td>'+cod+'</td></tr>';}).join(''):'<tr><td colspan="6" class="loading">No shipments</td></tr>';}
+function renderShipments(){var orders=S.orders;var filter=document.getElementById('ship-filter')?.value;var stats={in_transit:0,out_for_delivery:0,delivered:0,ndr:0,rto:0};orders.forEach(o=>{var s=o.fulfillment_status==='fulfilled'?'delivered':o.fulfillment_status?'in_transit':'in_transit';if(stats[s]!==undefined)stats[s]++;});document.getElementById('ship-stats').innerHTML=Object.entries({In_Transit:'in_transit',OFD:'out_for_delivery',Delivered:'delivered',NDR:'ndr',RTO:'rto'}).map(([l,k])=>'<div class="card"><div class="card-label">'+l.replace('_',' ')+'</div><div class="card-val '+(k==='ndr'?'red':k==='delivered'?'green':k==='rto'?'orange':'blue')+'">'+stats[k]+'</div></div>').join('');var filt=filter?orders.filter(o=>{var s=o.fulfillment_status==='fulfilled'?'delivered':o.fulfillment_status?'in_transit':'in_transit';return s===filter;}):orders;document.getElementById('ship-tbody').innerHTML=filt.length?filt.map(o=>{var awb=(o.fulfillments||[]).flatMap(f=>f.tracking_numbers||[]).join(', ')||'-';var s=o.fulfillment_status==='fulfilled'?'delivered':o.fulfillment_status?'in_transit':'pending';var cod=o.payment_gateway_names?.some(p=>p.toLowerCase().includes('cod'))?'ÃÂ¢ÃÂÃÂ¹'+parseFloat(o.total_price||0).toLocaleString('en-IN'):'-';return'<tr><td>'+awb+'</td><td>'+o.name+'</td><td>'+(o.billing_address?.name||'-')+'</td><td>'+(o.shipping_address?.city||'-')+'</td><td><span class="badge badge-blue">'+s+'</span></td><td>'+cod+'</td></tr>';}).join(''):'<tr><td colspan="6" class="loading">No shipments</td></tr>';}
 
 function trackAWB(){toast('AWB tracking - configure Velocity API in Settings','info');}
 function filterShipments(){renderShipments();}
 
-async function loadCOD(){try{var d=await api('GET','/cod');var items=Array.isArray(d)?d:[];document.getElementById('cod-stats').innerHTML='<div class="card"><div class="card-label">Total COD</div><div class="card-val green">Ã¢ÂÂ¹'+items.reduce((s,i)=>s+(i.cod_amount||0),0).toLocaleString('en-IN')+'</div></div><div class="card"><div class="card-label">Settled</div><div class="card-val blue">Ã¢ÂÂ¹'+items.filter(i=>i.bank_credited).reduce((s,i)=>s+(i.cod_amount||0),0).toLocaleString('en-IN')+'</div></div>';document.getElementById('cod-tbody').innerHTML=items.length?items.map(i=>'<tr><td>'+i.awb+'</td><td>'+(i.order_number||'-')+'</td><td>'+(i.customer_name||'-')+'</td><td>Ã¢ÂÂ¹'+(i.cod_amount||0)+'</td><td>Ã¢ÂÂ¹'+(i.velocity_charges||0)+'</td><td>Ã¢ÂÂ¹'+(i.net_amount||0)+'</td><td>'+(i.remittance_id||'-')+'</td><td><span class="badge '+(i.bank_credited?'badge-green':'badge-orange')+'">'+(i.bank_credited?'Yes':'No')+'</span></td></tr>').join(''):'<tr><td colspan="8" class="loading">No COD records</td></tr>';}catch(e){toast(e.message,'error');}}
+async function loadCOD(){try{var d=await api('GET','/cod');var items=Array.isArray(d)?d:[];document.getElementById('cod-stats').innerHTML='<div class="card"><div class="card-label">Total COD</div><div class="card-val green">ÃÂ¢ÃÂÃÂ¹'+items.reduce((s,i)=>s+(i.cod_amount||0),0).toLocaleString('en-IN')+'</div></div><div class="card"><div class="card-label">Settled</div><div class="card-val blue">ÃÂ¢ÃÂÃÂ¹'+items.filter(i=>i.bank_credited).reduce((s,i)=>s+(i.cod_amount||0),0).toLocaleString('en-IN')+'</div></div>';document.getElementById('cod-tbody').innerHTML=items.length?items.map(i=>'<tr><td>'+i.awb+'</td><td>'+(i.order_number||'-')+'</td><td>'+(i.customer_name||'-')+'</td><td>ÃÂ¢ÃÂÃÂ¹'+(i.cod_amount||0)+'</td><td>ÃÂ¢ÃÂÃÂ¹'+(i.velocity_charges||0)+'</td><td>ÃÂ¢ÃÂÃÂ¹'+(i.net_amount||0)+'</td><td>'+(i.remittance_id||'-')+'</td><td><span class="badge '+(i.bank_credited?'badge-green':'badge-orange')+'">'+(i.bank_credited?'Yes':'No')+'</span></td></tr>').join(''):'<tr><td colspan="8" class="loading">No COD records</td></tr>';}catch(e){toast(e.message,'error');}}
 function exportCOD(){toast('Export COD - data saved to CSV','info');}
 
 async function loadNDR(){try{var d=await api('GET','/ndr');var items=Array.isArray(d)?d:[];document.getElementById('ndr-stats').innerHTML='<div class="card"><div class="card-label">Total NDR</div><div class="card-val red">'+items.length+'</div></div><div class="card"><div class="card-label">Resolved</div><div class="card-val green">'+items.filter(i=>i.resolved).length+'</div></div>';document.getElementById('ndr-tbody').innerHTML=items.length?items.map(i=>'<tr><td>'+(i.awb||'-')+'</td><td>'+(i.order_number||'-')+'</td><td>'+(i.customer_name||'-')+'</td><td>'+(i.customer_phone||'-')+'</td><td>'+(i.city||'-')+'</td><td>'+(i.ndr_reason||'-')+'</td><td>'+(i.ndr_date||'-')+'</td><td>'+(i.attempt_count||0)+'</td><td><span class="badge '+(i.resolved?'badge-green':'badge-red')+'">'+(i.resolved?'Resolved':'Pending')+'</span></td></tr>').join(''):'<tr><td colspan="9" class="loading">No NDR records</td></tr>';}catch(e){toast(e.message,'error');}}
 
-async function loadPOs(){try{var d=await api('GET','/po');var items=Array.isArray(d)?d:[];var stats={sent:0,received:0,partial_receipt:0};items.forEach(p=>{if(stats[p.status]!==undefined)stats[p.status]++;});document.getElementById('po-stats').innerHTML='<div class="card"><div class="card-label">Sent</div><div class="card-val blue">'+stats.sent+'</div></div><div class="card"><div class="card-label">Partial</div><div class="card-val orange">'+stats.partial_receipt+'</div></div><div class="card"><div class="card-label">Received</div><div class="card-val green">'+stats.received+'</div></div>';document.getElementById('po-tbody').innerHTML=items.length?items.map(p=>'<tr><td>'+p.po_number+'</td><td>'+p.order_date+'</td><td>'+p.vendor_name+'</td><td>'+(p.item_count||0)+'</td><td>ÃÂ¥'+(p.total_amount||0)+'</td><td>Ã¢ÂÂ¹'+Math.round((p.total_amount||0)*(p.inr_rate||14)).toLocaleString('en-IN')+'</td><td><span class="badge '+(p.status==='received'?'badge-green':p.status==='partial_receipt'?'badge-orange':'badge-blue')+'">'+p.status+'</span></td><td>'+(p.expected_arrival||'-')+'</td><td><button class="btn-sm btn-outline" onclick="viewPO('+p.id+')">View</button></td></tr>').join(''):'<tr><td colspan="9" class="loading">No purchase orders</td></tr>';}catch(e){toast(e.message,'error');}}
+async function loadPOs(){try{var d=await api('GET','/po');var items=Array.isArray(d)?d:[];var stats={sent:0,received:0,partial_receipt:0};items.forEach(p=>{if(stats[p.status]!==undefined)stats[p.status]++;});document.getElementById('po-stats').innerHTML='<div class="card"><div class="card-label">Sent</div><div class="card-val blue">'+stats.sent+'</div></div><div class="card"><div class="card-label">Partial</div><div class="card-val orange">'+stats.partial_receipt+'</div></div><div class="card"><div class="card-label">Received</div><div class="card-val green">'+stats.received+'</div></div>';document.getElementById('po-tbody').innerHTML=items.length?items.map(p=>'<tr><td>'+p.po_number+'</td><td>'+p.order_date+'</td><td>'+p.vendor_name+'</td><td>'+(p.item_count||0)+'</td><td>ÃÂÃÂ¥'+(p.total_amount||0)+'</td><td>ÃÂ¢ÃÂÃÂ¹'+Math.round((p.total_amount||0)*(p.inr_rate||14)).toLocaleString('en-IN')+'</td><td><span class="badge '+(p.status==='received'?'badge-green':p.status==='partial_receipt'?'badge-orange':'badge-blue')+'">'+p.status+'</span></td><td>'+(p.expected_arrival||'-')+'</td><td><button class="btn-sm btn-outline" onclick="viewPO('+p.id+')">View</button></td></tr>').join(''):'<tr><td colspan="9" class="loading">No purchase orders</td></tr>';}catch(e){toast(e.message,'error');}}
 function openPOModal(){toast('PO creation - use API or add via Settings','info');}
 function viewPO(id){toast('View PO '+id,'info');}
 
-async function loadSales(){try{var d=await api('GET','/sales/summary');var items=Array.isArray(d)?d:[];document.getElementById('sales-tbody').innerHTML=items.length?items.map((s,i)=>'<tr><td>'+(i+1)+'</td><td>'+s.name+'</td><td>'+(s.department||'-')+'</td><td>'+(s.orders||0)+'</td><td>Ã¢ÂÂ¹'+(s.total_sales||0).toLocaleString('en-IN')+'</td><td>Ã¢ÂÂ¹'+(s.total_incentive||0).toLocaleString('en-IN')+'</td><td>Ã¢ÂÂ¹'+(s.pending_incentive||0).toLocaleString('en-IN')+'</td></tr>').join(''):'<tr><td colspan="7" class="loading">No sales data</td></tr>';}catch(e){toast(e.message,'error');}}
+async function loadSales(){try{var d=await api('GET','/sales/summary');var items=Array.isArray(d)?d:[];document.getElementById('sales-tbody').innerHTML=items.length?items.map((s,i)=>'<tr><td>'+(i+1)+'</td><td>'+s.name+'</td><td>'+(s.department||'-')+'</td><td>'+(s.orders||0)+'</td><td>ÃÂ¢ÃÂÃÂ¹'+(s.total_sales||0).toLocaleString('en-IN')+'</td><td>ÃÂ¢ÃÂÃÂ¹'+(s.total_incentive||0).toLocaleString('en-IN')+'</td><td>ÃÂ¢ÃÂÃÂ¹'+(s.pending_incentive||0).toLocaleString('en-IN')+'</td></tr>').join(''):'<tr><td colspan="7" class="loading">No sales data</td></tr>';}catch(e){toast(e.message,'error');}}
 function openSaleModal(){toast('Add sale via API - frontend form coming soon','info');}
 
 async function loadSettings(){try{var d=await api('GET','/settings');S.settings=d;document.getElementById('s-domain').value=d.shopify_domain||'';document.getElementById('s-token').value=d.shopify_token_masked||'';document.getElementById('v-user').value=d.velocity_username||'';document.getElementById('v-pass').value=d.velocity_password_masked||'';document.getElementById('v-url').value=d.velocity_base_url||'https://shazam.velocity.in/custom/api/v1';document.getElementById('c-name').value=d.company_name||'SANKI Fashion';document.getElementById('c-comm').value=d.commission_default||5;}catch(e){toast(e.message,'error');}}
 async function saveSettings(){var data={shopify_domain:document.getElementById('s-domain').value,shopify_token:document.getElementById('s-token').value,velocity_username:document.getElementById('v-user').value,velocity_password:document.getElementById('v-pass').value,velocity_base_url:document.getElementById('v-url').value,company_name:document.getElementById('c-name').value,commission_default:document.getElementById('c-comm').value};try{await api('POST','/settings',data);toast('Settings saved!','success');}catch(e){toast(e.message,'error');}}
 function testShopify(){toast('Testing Shopify...','info');api('GET','/shopify/orders?limit=1').then(()=>toast('Shopify connected!','success')).catch(e=>toast('Shopify error: '+e.message,'error'));}
-async function syncProductImages(){var btn=document.getElementById('sync-img-btn');btn.disabled=true;btn.textContent='Ã¢ÂÂ³ Syncing...';try{var d=await api('POST','/products/sync-images');toast('Synced '+d.synced+' product images!','success');}catch(e){toast('Image sync: '+e.message,'error');}finally{btn.disabled=false;btn.textContent='Ã°ÂÂÂ¼ Sync Product Images';}}
+async function syncProductImages(){var btn=document.getElementById('sync-img-btn');btn.disabled=true;btn.textContent='ÃÂ¢ÃÂÃÂ³ Syncing...';try{var d=await api('POST','/products/sync-images');toast('Synced '+d.synced+' product images!','success');}catch(e){toast('Image sync: '+e.message,'error');}finally{btn.disabled=false;btn.textContent='ÃÂ°ÃÂÃÂÃÂ¼ Sync Product Images';}}
 async function testVelocity(){toast('Testing Velocity...','info');try{await api('GET','/velocity/track');toast('Velocity connected!','success');}catch(e){if(e.message.includes('configured')||e.message.includes('credentials')){toast('Enter your Velocity username and password above','error');}else{toast('Velocity: '+e.message,'error');}}}
 
 var _allSections=['dashboard','orders','orders_online','orders_walkin','shipments','cod','ndr','po','sales','marketing','exchanges','team','settings'];
-var _sectionLabels={dashboard:'Ã°ÂÂÂ  Dashboard',orders:'Ã°ÂÂÂ¦ All Orders',orders_online:'Ã°ÂÂÂ Online Orders',orders_walkin:'Ã°ÂÂÂª Walk-in Orders',shipments:'Ã°ÂÂÂ Shipments',cod:'Ã°ÂÂÂ° COD & Pay',ndr:'Ã¢ÂÂ Ã¯Â¸Â NDR',po:'Ã°ÂÂÂ Purchase Orders',sales:'Ã°ÂÂÂ¥ Sales',marketing:'Ã°ÂÂÂ± Marketing',exchanges:'Ã°ÂÂÂ Exchanges',team:'Ã°ÂÂÂ¤ Team',settings:'Ã¢ÂÂÃ¯Â¸Â Settings'};
+var _sectionLabels={dashboard:'ÃÂ°ÃÂÃÂÃÂ  Dashboard',orders:'ÃÂ°ÃÂÃÂÃÂ¦ All Orders',orders_online:'ÃÂ°ÃÂÃÂÃÂ Online Orders',orders_walkin:'ÃÂ°ÃÂÃÂÃÂª Walk-in Orders',shipments:'ÃÂ°ÃÂÃÂÃÂ Shipments',cod:'ÃÂ°ÃÂÃÂÃÂ° COD & Pay',ndr:'ÃÂ¢ÃÂÃÂ ÃÂ¯ÃÂ¸ÃÂ NDR',po:'ÃÂ°ÃÂÃÂÃÂ Purchase Orders',sales:'ÃÂ°ÃÂÃÂÃÂ¥ Sales',marketing:'ÃÂ°ÃÂÃÂÃÂ± Marketing',exchanges:'ÃÂ°ÃÂÃÂÃÂ Exchanges',team:'ÃÂ°ÃÂÃÂÃÂ¤ Team',settings:'ÃÂ¢ÃÂÃÂÃÂ¯ÃÂ¸ÃÂ Settings'};
 async function loadUsers(){
   try{
     var d=await api('GET','/users');var items=Array.isArray(d)?d:[];
     document.getElementById('user-grid').innerHTML=items.length?items.map(function(u){
       var perms=Array.isArray(u.permissions)?u.permissions:[];
       var isOwner=u.role==='owner';
-      var permsHtml=isOwner?'<div style="font-size:11px;color:#a78bfa;margin-top:6px">Ã¢ÂÂ¦ Full access (owner)</div>':(perms.length>0?'<div style="font-size:11px;color:#888;margin-top:6px;line-height:1.6">'+perms.map(function(p){return'<span style="background:#1e1e35;border:1px solid #dde5f0;border-radius:4px;padding:1px 5px;margin:2px;display:inline-block">'+(_sectionLabels[p]||p)+'</span>';}).join('')+'</div>':'<div style="font-size:11px;color:#555;margin-top:6px;font-style:italic">No section access</div>');
-      return '<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div style="font-weight:700">'+u.name+'</div><span class="badge '+(u.active?'badge-green':'badge-red')+'" style="font-size:10px">'+(u.active?'Active':'Inactive')+'</span></div><div style="font-size:12px;color:#888;margin-bottom:4px">'+u.email+'</div><div style="font-size:12px;color:#aaa">'+(u.department||'Ã¢ÂÂ')+' ÃÂ· <b style="color:#059669">'+u.role+'</b></div>'+permsHtml+'<div style="margin-top:10px"><button class="btn-sm btn-outline" style="font-size:11px;padding:4px 8px" onclick="editUser('+JSON.stringify(u).replace(/'/g,"\'")+')">Ã¢ÂÂ Edit</button></div></div>';
+      var permsHtml=isOwner?'<div style="font-size:11px;color:#a78bfa;margin-top:6px">ÃÂ¢ÃÂÃÂ¦ Full access (owner)</div>':(perms.length>0?'<div style="font-size:11px;color:#888;margin-top:6px;line-height:1.6">'+perms.map(function(p){return'<span style="background:#1e1e35;border:1px solid #dde5f0;border-radius:4px;padding:1px 5px;margin:2px;display:inline-block">'+(_sectionLabels[p]||p)+'</span>';}).join('')+'</div>':'<div style="font-size:11px;color:#555;margin-top:6px;font-style:italic">No section access</div>');
+      return '<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><div style="font-weight:700">'+u.name+'</div><span class="badge '+(u.active?'badge-green':'badge-red')+'" style="font-size:10px">'+(u.active?'Active':'Inactive')+'</span></div><div style="font-size:12px;color:#888;margin-bottom:4px">'+u.email+'</div><div style="font-size:12px;color:#aaa">'+(u.department||'ÃÂ¢ÃÂÃÂ')+' ÃÂÃÂ· <b style="color:#059669">'+u.role+'</b></div>'+permsHtml+'<div style="margin-top:10px"><button class="btn-sm btn-outline" style="font-size:11px;padding:4px 8px" onclick="editUser('+JSON.stringify(u).replace(/'/g,"\'")+')">ÃÂ¢ÃÂÃÂ Edit</button></div></div>';
     }).join(''):'<p class="loading">No users</p>';
   }catch(e){toast(e.message,'error');}
 }
 function openUserModal(){
   document.getElementById('u-id').value='';document.getElementById('u-name').value='';document.getElementById('u-email').value='';document.getElementById('u-email').disabled=false;
   document.getElementById('u-pass').value='';document.getElementById('u-phone').value='';document.getElementById('u-role').value='staff';document.getElementById('u-dept').value='';
-  document.getElementById('u-pass-note').textContent='(required for new)';document.getElementById('user-modal-title').textContent='Ã°ÂÂÂ¤ Add User';
+  document.getElementById('u-pass-note').textContent='(required for new)';document.getElementById('user-modal-title').textContent='ÃÂ°ÃÂÃÂÃÂ¤ Add User';
   document.querySelectorAll('#perm-checkboxes input[type=checkbox]').forEach(function(cb){cb.checked=false;});
   document.getElementById('user-modal').style.display='flex';
 }
 function editUser(u){
   document.getElementById('u-id').value=u.id;document.getElementById('u-name').value=u.name||'';document.getElementById('u-email').value=u.email||'';document.getElementById('u-email').disabled=true;
   document.getElementById('u-pass').value='';document.getElementById('u-phone').value=u.phone||'';document.getElementById('u-role').value=u.role||'staff';document.getElementById('u-dept').value=u.department||'';
-  document.getElementById('u-pass-note').textContent='(leave blank to keep)';document.getElementById('user-modal-title').textContent='Ã¢ÂÂ Edit User';
+  document.getElementById('u-pass-note').textContent='(leave blank to keep)';document.getElementById('user-modal-title').textContent='ÃÂ¢ÃÂÃÂ Edit User';
   var perms=Array.isArray(u.permissions)?u.permissions:[];
   document.querySelectorAll('#perm-checkboxes input[type=checkbox]').forEach(function(cb){cb.checked=perms.includes(cb.value);});
   document.getElementById('user-modal').style.display='flex';
@@ -735,7 +735,7 @@ async function saveUser(){
     var data={name:name,role:role,department:dept,phone:phone,permissions:permissions};if(pass)data.password=pass;
     if(id){await api('PUT','/users/'+id,data);}else{data.email=email;await api('POST','/users',data);}
     toast(id?'User updated!':'User created!','success');closeUserModal();await loadUsers();applyNavPermissions();
-  }catch(e){toast(e.message,'error');}finally{btn.disabled=false;btn.textContent='Ã¢ÂÂ Save User';}
+  }catch(e){toast(e.message,'error');}finally{btn.disabled=false;btn.textContent='ÃÂ¢ÃÂÃÂ Save User';}
 }
 function applyNavPermissions(){
   if(!S.user||S.user.role==='owner')return;
@@ -764,7 +764,7 @@ function exportOrders(){
   var headers=['Order#','Date','Customer','Phone','City','State','Items','SKUs','Amount','Paid','Balance','Payment','Payment Mode','Delivery','AWB','Courier','Channel','Package'];
   var rows=[headers.map(esc).join(',')];
   S.orders.forEach(function(o){
-    var itemsStr=(o.line_items||[]).map(function(i){return i.name+' ÃÂ'+i.quantity+(i.variant_title?' ('+i.variant_title+')':'');}).join('; ')||o.items||'';
+    var itemsStr=(o.line_items||[]).map(function(i){return i.name+' ÃÂÃÂ'+i.quantity+(i.variant_title?' ('+i.variant_title+')':'');}).join('; ')||o.items||'';
     var skusStr=(o.line_items||[]).map(function(i){return i.sku||'';}).filter(Boolean).join('; ');
     rows.push([esc(o.name),esc(o.date),esc(o.customer),esc(o.phone),esc(o.city),esc(o.state),esc(itemsStr),esc(skusStr),o.amount||0,o.paid_amount||0,o.balance_amount||0,esc(o.payment||''),esc(o.payment_mode||''),esc(o.delivery||''),esc(o.awb||''),esc(o.courier||''),esc(o.channel||''),esc(o.pkg_summary||'')].join(','));
   });
@@ -774,12 +774,12 @@ function exportOrders(){
   a.download='orders_'+new Date().toISOString().substring(0,10)+'.csv';a.click();
 }
 
-// Ã¢ÂÂÃ¢ÂÂ ORDER ACTION MODAL Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ ORDER ACTION MODAL ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
 var _actionOrder=null,_actionType='exchange';
 function openActionModal(order){
   _actionOrder=order;_actionType='exchange';
   // Pre-fill order info
-  document.getElementById('action-order-info').innerHTML='<b style="color:#f0f0f5">'+order.name+'</b> &nbsp;ÃÂ·&nbsp; '+order.customer+(order.phone?' <span style="color:#059669">'+order.phone+'</span>':'')+'<br><span style="color:#888;font-size:12px">'+(order.items||'')+'</span>'+(order.payment?'<br><span class="badge badge-gray" style="font-size:10px;margin-top:4px">'+order.payment+'</span>':'')+( order.delivery?'<span class="ds ds-'+order.delivery+'" style="margin-left:6px">'+dsLabel(order.delivery)+'</span>':'');
+  document.getElementById('action-order-info').innerHTML='<b style="color:#f0f0f5">'+order.name+'</b> &nbsp;ÃÂÃÂ·&nbsp; '+order.customer+(order.phone?' <span style="color:#059669">'+order.phone+'</span>':'')+'<br><span style="color:#888;font-size:12px">'+(order.items||'')+'</span>'+(order.payment?'<br><span class="badge badge-gray" style="font-size:10px;margin-top:4px">'+order.payment+'</span>':'')+( order.delivery?'<span class="ds ds-'+order.delivery+'" style="margin-left:6px">'+dsLabel(order.delivery)+'</span>':'');
   // Pre-fill first item
   var first=(order.line_items||[])[0]||{};
   document.getElementById('a-orig-item').value=first.name||'';
@@ -828,7 +828,7 @@ async function submitOrderAction(){
     document.getElementById('a-remarks').value='';
     loadActionHistory(_actionOrder.id);
   }catch(e){toast(e.message,'error');}
-  finally{btn.disabled=false;btn.textContent='Ã¢ÂÂ Record Action';}
+  finally{btn.disabled=false;btn.textContent='ÃÂ¢ÃÂÃÂ Record Action';}
 }
 async function loadActionHistory(orderId){
   var div=document.getElementById('action-history');if(!div)return;
@@ -837,23 +837,23 @@ async function loadActionHistory(orderId){
     var forOrder=items.filter(function(e){return String(e.order_id)===String(orderId);});
     if(!forOrder.length){div.innerHTML='';return;}
     var typeColor={exchange:'badge-blue',return:'badge-red',replace:'badge-orange',cancel_note:'badge-gray'};
-    var typeIcon={exchange:'Ã°ÂÂÂ',return:'Ã¢ÂÂ©',replace:'Ã°ÂÂÂ',cancel_note:'Ã¢ÂÂ'};
+    var typeIcon={exchange:'ÃÂ°ÃÂÃÂÃÂ',return:'ÃÂ¢ÃÂÃÂ©',replace:'ÃÂ°ÃÂÃÂÃÂ',cancel_note:'ÃÂ¢ÃÂÃÂ'};
     div.innerHTML='<div style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;border-top:1px solid #dde5f0;padding-top:12px">Action History</div>'+
       forOrder.map(function(a){
         var at=a.action_type||'exchange';
         return '<div style="background:#0f0f1a;border:1px solid #dde5f0;border-radius:7px;padding:10px;margin-bottom:6px">'+
           '<span class="badge '+(typeColor[at]||'badge-gray')+'" style="font-size:10px">'+( typeIcon[at]||'')+(at.replace('_',' ')).toUpperCase()+'</span>'+
           (a.original_item?' <span style="font-size:12px;color:#ddd">'+a.original_item+(a.original_size?' / '+a.original_size:'')+'</span>':'')+
-          (a.exchange_item?' <span style="color:#888">Ã¢ÂÂ</span> <span style="font-size:12px;color:#ddd">'+a.exchange_item+(a.exchange_size?' / '+a.exchange_size:'')+'</span>':'')+
+          (a.exchange_item?' <span style="color:#888">ÃÂ¢ÃÂÃÂ</span> <span style="font-size:12px;color:#ddd">'+a.exchange_item+(a.exchange_size?' / '+a.exchange_size:'')+'</span>':'')+
           (a.reason?'<div style="font-size:12px;color:#888;margin-top:3px">'+a.reason+'</div>':'')+
           (a.remarks?'<div style="font-size:11px;color:#666;font-style:italic;margin-top:2px">'+a.remarks+'</div>':'')+
-          '<div style="font-size:10px;color:#444;margin-top:4px">'+(a.created_at||'').substring(0,16)+(a.status?' ÃÂ· <span style="color:#888">'+a.status+'</span>':'')+'</div>'+
+          '<div style="font-size:10px;color:#444;margin-top:4px">'+(a.created_at||'').substring(0,16)+(a.status?' ÃÂÃÂ· <span style="color:#888">'+a.status+'</span>':'')+'</div>'+
           '</div>';
       }).join('');
   }catch(e){}
 }
 
-// Ã¢ÂÂÃ¢ÂÂ EXCHANGES SCREEN Ã¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂÃ¢ÂÂ
+// ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ EXCHANGES SCREEN ÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂÃÂ¢ÃÂÃÂ
 var _exchAll=[], _exchStatusFilter='', _exchTypeFilter='';
 function setExchStatusTab(val,btn){_exchStatusFilter=val;document.querySelectorAll('#exch-status-tabs .tab-btn').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');filterExchanges();}
 function setExchTypeTab(val,btn){_exchTypeFilter=val;document.querySelectorAll('#exch-type-tabs .tab-btn').forEach(function(b){b.classList.remove('active');});btn.classList.add('active');filterExchanges();}
@@ -861,7 +861,7 @@ function filterExchanges(){
   var search=(document.getElementById('exch-search')?.value||'').toLowerCase();
   var from=document.getElementById('exch-from')?.value||'';var to=document.getElementById('exch-to')?.value||'';
   var typeColor={exchange:'badge-blue',return:'badge-red',replace:'badge-orange',cancel_note:'badge-gray'};
-  var typeIcon={exchange:'Ã°ÂÂÂ',return:'Ã¢ÂÂ©',replace:'Ã°ÂÂÂ',cancel_note:'Ã¢ÂÂ'};
+  var typeIcon={exchange:'ÃÂ°ÃÂÃÂÃÂ',return:'ÃÂ¢ÃÂÃÂ©',replace:'ÃÂ°ÃÂÃÂÃÂ',cancel_note:'ÃÂ¢ÃÂÃÂ'};
   var statusBadge={pending:'badge-orange',in_progress:'badge-blue',resolved:'badge-green',cancelled:'badge-gray'};
   var items=_exchAll.filter(function(e){
     if(_exchStatusFilter&&e.status!==_exchStatusFilter)return false;
@@ -876,9 +876,9 @@ function filterExchanges(){
     var typeBadge='<span class="badge '+(typeColor[at]||'badge-gray')+'" style="font-size:10px">'+(typeIcon[at]||'')+' '+(at.replace('_',' ')).toUpperCase()+'</span>';
     var st=e.status||'pending';
     var statusHtml='<span class="badge '+(statusBadge[st]||'badge-gray')+'" style="font-size:10px">'+st.replace('_',' ').toUpperCase()+'</span>';
-    var actionHtml='<select onchange="updateExchStatus('+e.id+',this.value)" style="background:#0f0f1a;border:1px solid #dde5f0;color:#aaa;padding:3px 6px;border-radius:6px;font-size:11px"><option value="">Ã¢ÂÂ Update</option><option value="pending">Pending</option><option value="in_progress">In Progress</option><option value="resolved">Resolved</option><option value="cancelled">Cancelled</option></select>';
+    var actionHtml='<select onchange="updateExchStatus('+e.id+',this.value)" style="background:#0f0f1a;border:1px solid #dde5f0;color:#aaa;padding:3px 6px;border-radius:6px;font-size:11px"><option value="">ÃÂ¢ÃÂÃÂ Update</option><option value="pending">Pending</option><option value="in_progress">In Progress</option><option value="resolved">Resolved</option><option value="cancelled">Cancelled</option></select>';
     return '<tr><td>'+e.id+'</td><td>'+(e.created_at||'').substring(0,10)+'</td><td style="font-weight:600">'+e.customer_name+'</td><td style="font-size:12px;color:#888">'+(e.customer_phone||'-')+'</td><td style="font-weight:600;color:#059669">'+(e.order_number||'-')+'</td><td style="font-size:12px">'+(e.original_item||'-')+(e.original_size?' / <b>'+e.original_size+'</b>':'')+'</td><td style="font-size:12px">'+(e.exchange_item?'<span style="color:#4ade80">'+e.exchange_item+(e.exchange_size?' / <b>'+e.exchange_size+'</b>':'')+'</span>':'-')+'</td><td>'+typeBadge+'</td><td style="font-size:11px;color:#888;max-width:160px">'+(e.reason||e.remarks||'-')+'</td><td>'+statusHtml+'</td><td>'+actionHtml+'</td></tr>';
-  }).join(''):(_exchAll.length===0?'<tr><td colspan="11" class="loading">No exchange records yet Ã¢ÂÂ click + Add Exchange above.</td></tr>':'<tr><td colspan="11" class="loading">No records match filter.</td></tr>');
+  }).join(''):(_exchAll.length===0?'<tr><td colspan="11" class="loading">No exchange records yet ÃÂ¢ÃÂÃÂ click + Add Exchange above.</td></tr>':'<tr><td colspan="11" class="loading">No records match filter.</td></tr>');
 }
 async function updateExchStatus(id,status){if(!status)return;try{await api('PUT','/exchanges/'+id,{status:status});toast('Status updated!','success');await loadExchanges();}catch(e){toast(e.message,'error');}}
 async function loadExchanges(){
@@ -895,7 +895,7 @@ function exportExchanges(){
   var h=['#','Date','Customer','Phone','Order','Original Item','Size','Exchange To','Exchange Size','Type','Reason','Remarks','Status'];
   var rows=[h.map(esc).join(',')];
   _exchAll.forEach(function(e){rows.push([e.id,(e.created_at||'').substring(0,10),e.customer_name,e.customer_phone||'',e.order_number||'',e.original_item||'',e.original_size||'',e.exchange_item||'',e.exchange_size||'',e.action_type||'',e.reason||'',e.remarks||'',e.status||''].map(esc).join(','));});
-  var b=new Blob(['Ã¯Â»Â¿'+rows.join('\n')],{type:'text/csv;charset=utf-8'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='exchanges_'+new Date().toISOString().substring(0,10)+'.csv';a.click();
+  var b=new Blob(['ÃÂ¯ÃÂ»ÃÂ¿'+rows.join('\n')],{type:'text/csv;charset=utf-8'});var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='exchanges_'+new Date().toISOString().substring(0,10)+'.csv';a.click();
 }
 
 // Init
