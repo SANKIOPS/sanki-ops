@@ -9,7 +9,7 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
  
-// ═══ DATABASE ═══════════════════════════════════════════════
+// âââ DATABASE âââââââââââââââââââââââââââââââââââââââââââââââ
 const db = new Database(process.env.DB_PATH || './sanki_ops.db');
 db.pragma('journal_mode = WAL');
 db.pragma('foreign_keys = ON');
@@ -219,7 +219,7 @@ if (uc.c === 0) {
   );
 }
 
-// ═══ MIDDLEWARE ═════════════════════════════════════════════
+// âââ MIDDLEWARE âââââââââââââââââââââââââââââââââââââââââââââ
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -235,14 +235,14 @@ const auth = (req, res, next) => {
   next();
 };
 
-// ═══ HELPERS ════════════════════════════════════════════════
+// âââ HELPERS ââââââââââââââââââââââââââââââââââââââââââââââââ
 const getSetting = (k) => {
   const envMap = { shopify_domain: 'SHOPIFY_DOMAIN', shopify_token: 'SHOPIFY_TOKEN' };
   if (envMap[k] && process.env[envMap[k]]) return process.env[envMap[k]];
   const r = db.prepare('SELECT value FROM settings WHERE key=?').get(k); return r ? r.value : null;
 };
 const setSetting = (k, v) => db.prepare('INSERT OR REPLACE INTO settings (key,value) VALUES (?,?)').run(k, v);
-const fmt = (n) => '₹' + Number(n||0).toLocaleString('en-IN');
+const fmt = (n) => 'â¹' + Number(n||0).toLocaleString('en-IN');
 
 async function shopifyFetch(endpoint, opts = {}) {
   const domain = getSetting('shopify_domain');
@@ -254,7 +254,7 @@ async function shopifyFetch(endpoint, opts = {}) {
   return r.json();
 }
 
-// Cursor-paginated Shopify fetch — follows Link: rel="next" until all orders retrieved (max 1000)
+// Cursor-paginated Shopify fetch â follows Link: rel="next" until all orders retrieved (max 1000)
 async function shopifyFetchAll(endpoint, maxOrders=1000) {
   const domain = getSetting('shopify_domain');
   const token = getSetting('shopify_token');
@@ -317,7 +317,7 @@ async function getVelocityToken() {
       } catch(e) { lastErr = `${endpoint}: ${e.message}`; }
     }
   }
-  throw new Error(`Velocity auth failed — tried ${authEndpoints.length} endpoints. Last error: ${lastErr}`);
+  throw new Error(`Velocity auth failed â tried ${authEndpoints.length} endpoints. Last error: ${lastErr}`);
 }
 
 async function velocityFetch(endpoint, opts = {}) {
@@ -350,7 +350,7 @@ function normalizeVelStatus(s) {
   return 'in_transit';
 }
 
-// ═══ AUTH ════════════════════════════════════════════════════
+// âââ AUTH ââââââââââââââââââââââââââââââââââââââââââââââââââââ
 app.get('/api/auth/me', (req, res) => {
   if (!req.session.userId) return res.json({ user: null });
   const u = db.prepare('SELECT id,name,email,role,department,permissions FROM users WHERE id=?').get(req.session.userId);
@@ -371,7 +371,7 @@ app.post('/api/auth/login', async (req, res) => {
 
 app.post('/api/auth/logout', (req, res) => { req.session.destroy(); res.json({ ok: true }); });
 
-// ═══ SETTINGS ════════════════════════════════════════════════
+// âââ SETTINGS ââââââââââââââââââââââââââââââââââââââââââââââââ
 app.get('/api/settings', auth, (req, res) => {
   const keys = ['shopify_domain','shopify_token','velocity_username','velocity_password','velocity_base_url','company_name','currency','commission_default'];
   const out = {};
@@ -389,7 +389,7 @@ app.post('/api/settings', auth, (req, res) => {
   res.json({ ok: true });
 });
 
-// ═══ SHOPIFY PROXY ════════════════════════════════════════════
+// âââ SHOPIFY PROXY ââââââââââââââââââââââââââââââââââââââââââââ
 app.get('/api/shopify/orders', auth, async (req, res) => {
   try {
     const { status='any', limit=250, created_at_min, fulfillment_status, financial_status } = req.query;
@@ -566,39 +566,13 @@ app.get('/api/orders/list', auth, async (req, res) => {
         txMap[o.id] = Math.max(0, paid - refunded);
       } catch(e) { txMap[o.id] = 0; }
     }
-    // Note: refunded/partially_refunded orders use o.refunds[] directly — no extra API call needed
+    // Note: refunded/partially_refunded orders use o.refunds[] directly â no extra API call needed
 
     // Build action map from exchanges table (latest action per order)
     const exchangeMap = {};
     db.prepare('SELECT order_id, action_type, exchange_item, reason FROM exchanges ORDER BY id ASC').all().forEach(e=>{ exchangeMap[String(e.order_id)]=e; });
 
-    // CUSTOMER NAME FIX: Batch-fetch names from Shopify, cached in customer_names table
-    const customerIds = [...new Set(orders.filter(o => o.customer&&o.customer.id).map(o => o.customer.id))];
-    const customerMap = {};
-    if (customerIds.length > 0) {
-      try { const phs3 = customerIds.map(()=>'?').join(','); db.prepare('SELECT id,name FROM customer_names WHERE id IN (' + phs3 + ')').all(...customerIds).forEach(r => { customerMap[r.id] = r.name; }); } catch(e) {}
-      const missing = customerIds.filter(id => !(id in customerMap));
-      if (missing.length > 0) {
-        try {
-          for (let ci = 0; ci < missing.length; ci += 250) {
-            const batch = missing.slice(ci, ci+250);
-            const domain = getSetting('shopify_domain');
-            const token = getSetting('shopify_token');
-            const gids = batch.map(id => 'gid://shopify/Customer/' + id);
-            const gqlQ = '{ nodes(ids: ' + JSON.stringify(gids) + ') { ... on Customer { id firstName lastName displayName } } }';
-            const gqlR = await fetch('https://' + domain + '/admin/api/2024-01/graphql.json', {
-              method: 'POST',
-              headers: { 'X-Shopify-Access-Token': token, 'Content-Type': 'application/json' },
-              body: JSON.stringify({ query: gqlQ })
-            });
-            const gqlData = await gqlR.json();
-            const cstmt = db.prepare('INSERT OR REPLACE INTO customer_names (id,name) VALUES (?,?)');
-            ((gqlData.data && gqlData.data.nodes) || []).forEach(c => { if (!c || !c.id) return; const numId = parseInt(c.id.split('/').pop(), 10); const nm = [c.firstName, c.lastName].filter(Boolean).join(' ') || c.displayName || '-'; customerMap[numId]=nm; cstmt.run(numId,nm); });
-          }
-        } catch(e) {}
-      }
-    }
-    const enriched = orders.map(o => {
+        const enriched = orders.map(o => {
       const awbs = (o.fulfillments||[]).flatMap(f=>f.tracking_numbers||[]).filter(Boolean);
       const awb = awbs[0] || '';
       const isCOD = (o.payment_gateway_names||[]).some(p=>p.toLowerCase().includes('cod'))||(o.payment_gateway||'').toLowerCase().includes('cod');
@@ -616,7 +590,7 @@ app.get('/api/orders/list', auth, async (req, res) => {
       } else if (ndr && !ndr.resolved) {
         delivery = 'ndr';
       } else if (o.fulfillment_status === 'fulfilled') {
-        // Fix #16: Walk-in (POS) customers collect in-store — use 'fulfilled', not 'dispatched'
+        // Fix #16: Walk-in (POS) customers collect in-store â use 'fulfilled', not 'dispatched'
         if ((o.source_name||'').toLowerCase() === 'pos') {
           delivery = 'fulfilled';
         } else {
@@ -674,7 +648,7 @@ app.get('/api/orders/list', auth, async (req, res) => {
         // Use cached product image first, then Shopify inline image if any
         image: imageCache[String(i.variant_id)] || i.image?.src || null,
       }));
-      const items = line_items.map(i=>`${i.name} ×${i.quantity}`).join(', ');
+      const items = line_items.map(i=>`${i.name} Ã${i.quantity}`).join(', ');
 
       // FIX 2: Payment type & correct paid/balance amounts
       const totalPrice = parseFloat(o.total_price||0);
@@ -686,11 +660,11 @@ app.get('/api/orders/list', auth, async (req, res) => {
       let paid_amount = 0, balance_amount = 0;
 
       if (o.financial_status === 'refunded') {
-        // Full refund — money returned to customer
+        // Full refund â money returned to customer
         paymentType = 'Refunded';
         paid_amount = 0; balance_amount = 0;
       } else if (o.financial_status === 'partially_refunded') {
-        // Partial refund — calculate net amount still retained
+        // Partial refund â calculate net amount still retained
         paymentType = 'Partial Refund';
         const totalRefunded = (o.refunds||[]).reduce((sum, r) => {
           const lineTotal = (r.refund_line_items||[]).reduce((s, li) => s + parseFloat(li.subtotal||0), 0);
@@ -699,7 +673,7 @@ app.get('/api/orders/list', auth, async (req, res) => {
           return sum + lineTotal + shipTotal;
         }, 0);
         paid_amount = Math.max(0, totalPrice - totalRefunded);
-        balance_amount = 0; // No balance to collect — customer already paid, we refunded part
+        balance_amount = 0; // No balance to collect â customer already paid, we refunded part
       } else if (o.financial_status === 'paid') {
         // Fully paid (COD collected or prepaid)
         paid_amount = totalPrice; balance_amount = 0;
@@ -707,7 +681,7 @@ app.get('/api/orders/list', auth, async (req, res) => {
         // Use actual transaction data (online advance paid)
         paid_amount = txMap[o.id] !== undefined ? txMap[o.id] : 0;
         balance_amount = Math.max(0, totalPrice - paid_amount);
-        // FIX 2: If Velocity confirms delivery → COD balance also collected, clear balance
+        // FIX 2: If Velocity confirms delivery â COD balance also collected, clear balance
         if (cached && cached.status === 'delivered') {
           paid_amount = totalPrice; balance_amount = 0;
           paymentType = 'COD (Collected)';
@@ -726,7 +700,7 @@ app.get('/api/orders/list', auth, async (req, res) => {
           paid_amount = 0; balance_amount = totalPrice;
         }
       } else if (['pending', 'authorized', 'voided'].includes(o.financial_status)) {
-        // Fix #13: Online order not yet paid — must not show as paid
+        // Fix #13: Online order not yet paid â must not show as paid
         paid_amount = 0; balance_amount = totalPrice;
         paymentType = 'Unpaid';
       } else {
@@ -734,14 +708,14 @@ app.get('/api/orders/list', auth, async (req, res) => {
         paid_amount = totalPrice; balance_amount = 0;
       }
 
-      // FIX 1: Package details — Velocity cache first, then Shopify order weight, then line item grams
+      // FIX 1: Package details â Velocity cache first, then Shopify order weight, then line item grams
       let package_weight = parseFloat(cached?.weight||0);
       if (!package_weight) {
         // Shopify's total_weight is in grams
         if (o.total_weight && o.total_weight > 0) {
           package_weight = parseFloat(o.total_weight) / 1000;
         } else {
-          // Sum individual line item weights (grams × qty)
+          // Sum individual line item weights (grams Ã qty)
           const lineGrams = (o.line_items||[]).reduce((sum, i) => sum + ((parseFloat(i.grams)||0) * (i.quantity||1)), 0);
           if (lineGrams > 0) package_weight = lineGrams / 1000;
         }
@@ -756,7 +730,7 @@ app.get('/api/orders/list', auth, async (req, res) => {
 
       return {
         id: o.id, name: o.name, date: (o.created_at||'').substring(0,10),
-        customer: ([o.customer?.first_name, o.customer?.last_name].filter(Boolean).join(' ') || o.billing_address?.name || o.shipping_address?.name || (o.source_name==='pos'?o.note:null) || '-'),
+        customer: o.billing_address?.name || o.billing_address?.first_name || o.shipping_address?.name || o.shipping_address?.first_name || '-',
         phone: o.billing_address?.phone || o.shipping_address?.phone || o.customer?.phone || '',
         city: o.shipping_address?.city || '',
         state: o.shipping_address?.province || '',
@@ -793,7 +767,7 @@ app.get('/api/orders/list', auth, async (req, res) => {
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
-// ═══ VELOCITY PROXY ════════════════════════════════════════════
+// âââ VELOCITY PROXY ââââââââââââââââââââââââââââââââââââââââââââ
 // Test endpoint (GET) - just verifies auth works
 app.get('/api/velocity/track', auth, async (req, res) => {
   try {
@@ -965,7 +939,7 @@ app.post('/api/sync/orders', auth, async (req, res) => {
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
-// ═══ DASHBOARD ════════════════════════════════════════════════
+// âââ DASHBOARD ââââââââââââââââââââââââââââââââââââââââââââââââ
 app.get('/api/dashboard', auth, async (req, res) => {
   try {
     const today = new Date().toISOString().substring(0,10);
@@ -985,7 +959,7 @@ app.get('/api/dashboard', auth, async (req, res) => {
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
-// ═══ PURCHASE ORDERS ══════════════════════════════════════════
+// âââ PURCHASE ORDERS ââââââââââââââââââââââââââââââââââââââââââ
 app.get('/api/po', auth, (req, res) => {
   const { status } = req.query;
   let q = 'SELECT po.*, (SELECT COUNT(*) FROM po_items WHERE po_id=po.id) as item_count FROM purchase_orders po WHERE 1=1';
@@ -1044,7 +1018,7 @@ app.put('/api/po/:id/receive', auth, (req, res) => {
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
-// ═══ SALES & AGENTS ═══════════════════════════════════════════
+// âââ SALES & AGENTS âââââââââââââââââââââââââââââââââââââââââââ
 app.get('/api/users', auth, (req, res) => {
   const rows = db.prepare('SELECT id,name,email,role,department,phone,active,permissions FROM users ORDER BY name').all();
   res.json(rows.map(u => ({ ...u, permissions: JSON.parse(u.permissions||'[]') })));
@@ -1124,7 +1098,7 @@ app.get('/api/sales/summary', auth, (req, res) => {
   res.json(rows);
 });
 
-// ═══ EXCHANGES ════════════════════════════════════════════════
+// âââ EXCHANGES ââââââââââââââââââââââââââââââââââââââââââââââââ
 app.get('/api/exchanges', auth, (req, res) => {
   const { status } = req.query;
   let q = 'SELECT e.*,u.name as agent_name FROM exchanges e LEFT JOIN users u ON e.assigned_to=u.id WHERE 1=1';
@@ -1155,7 +1129,7 @@ app.put('/api/exchanges/:id', auth, (req, res) => {
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
-// ═══ MARKETING ════════════════════════════════════════════════
+// âââ MARKETING ââââââââââââââââââââââââââââââââââââââââââââââââ
 app.get('/api/marketing', auth, (req, res) => {
   const { ig_status, category } = req.query;
   let q = 'SELECT * FROM marketing_tracker WHERE 1=1';
@@ -1188,7 +1162,7 @@ app.put('/api/marketing/:id', auth, (req, res) => {
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
-// ═══ COD LEDGER ═══════════════════════════════════════════════
+// âââ COD LEDGER âââââââââââââââââââââââââââââââââââââââââââââââ
 app.get('/api/cod', auth, (req, res) => {
   const { from, to, status } = req.query;
   let q = 'SELECT * FROM cod_ledger WHERE 1=1';
@@ -1219,7 +1193,7 @@ app.put('/api/cod/:awb/mark-credited', auth, (req, res) => {
   res.json({ ok:true });
 });
 
-// ═══ NDR MANAGEMENT ═══════════════════════════════════════════
+// âââ NDR MANAGEMENT âââââââââââââââââââââââââââââââââââââââââââ
 app.get('/api/ndr', auth, (req, res) => {
   const { resolved } = req.query;
   let q = 'SELECT * FROM ndr_log WHERE 1=1';
@@ -1238,7 +1212,7 @@ app.put('/api/ndr/:id', auth, (req, res) => {
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
-// ═══ ORDER NOTES ══════════════════════════════════════════════
+// âââ ORDER NOTES ââââââââââââââââââââââââââââââââââââââââââââââ
 app.get('/api/orders/:order_id/notes', auth, (req, res) => {
   const notes = db.prepare('SELECT n.*,u.name as user_name FROM order_notes n LEFT JOIN users u ON n.created_by=u.id WHERE n.order_id=? ORDER BY n.created_at DESC').all(req.params.order_id);
   res.json(notes);
@@ -1252,7 +1226,7 @@ app.post('/api/orders/:order_id/notes', auth, (req, res) => {
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
-// ═══ EXPORT CSV ════════════════════════════════════════════════
+// âââ EXPORT CSV ââââââââââââââââââââââââââââââââââââââââââââââââ
 app.get('/api/export/orders', auth, async (req, res) => {
   try {
     const { from, to } = req.query;
