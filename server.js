@@ -208,6 +208,7 @@ db.exec(`
 // Column migrations (safe to run on every startup)
 try { db.exec("ALTER TABLE exchanges ADD COLUMN action_type TEXT DEFAULT 'exchange'"); } catch(e) {}
 try { db.exec("ALTER TABLE exchanges ADD COLUMN remarks TEXT DEFAULT ''"); } catch(e) {}
+try { db.exec('CREATE TABLE IF NOT EXISTS customer_names (id INTEGER PRIMARY KEY, name TEXT)'); } catch(e) {}
 try { db.exec("ALTER TABLE users ADD COLUMN permissions TEXT DEFAULT '[]'"); } catch(e) {}
 
 // Seed admin user
@@ -235,7 +236,11 @@ const auth = (req, res, next) => {
 };
 
 // ═══ HELPERS ════════════════════════════════════════════════
-const getSetting = (k) => { const r = db.prepare('SELECT value FROM settings WHERE key=?').get(k); return r ? r.value : null; };
+const getSetting = (k) => {
+  const envMap = { shopify_domain: 'SHOPIFY_DOMAIN', shopify_token: 'SHOPIFY_TOKEN' };
+  if (envMap[k] && process.env[envMap[k]]) return process.env[envMap[k]];
+  const r = db.prepare('SELECT value FROM settings WHERE key=?').get(k); return r ? r.value : null;
+};
 const setSetting = (k, v) => db.prepare('INSERT OR REPLACE INTO settings (key,value) VALUES (?,?)').run(k, v);
 const fmt = (n) => '₹' + Number(n||0).toLocaleString('en-IN');
 
@@ -493,19 +498,26 @@ app.get('/api/orders/list', auth, async (req, res) => {
       db.prepare(`SELECT order_number,resolved FROM ndr_log WHERE order_number IN (${nOrdPhs})`).all(...uniqueOrdNames).forEach(n=>{ ndrOrderMap[n.order_number]=n; });
     }
 
-    // IMAGE FIX: Look up product images from cache by variant_id
-    const allVariantIds = orders.flatMap(o => (o.line_items||[]).map(i => i.variant_id).filter(Boolean));
+    // IMAGE FIX: Fetch variant-specific images from Shopify for current orders
     const imageCache = {};
-    if (allVariantIds.length > 0) {
-            // Fetch images from Shopify API (product_images table empty after Railway redeploy)
+    const allProductIds = [...new Set(orders.flatMap(o => (o.line_items||[]).map(i => i.product_id).filter(Boolean)))];
+    if (allProductIds.length > 0) {
       try {
-        const prodData = await shopifyFetch('products.json?limit=250&fields=id,variants,images');
-        (prodData.products || []).forEach(p => {
-          const img = p.images?.[0]?.src;
-          if (img) (p.variants || []).forEach(v => { imageCache[String(v.id)] = img; });
-        });
+        for (let bi = 0; bi < allProductIds.length; bi += 50) {
+          const batch = allProductIds.slice(bi, bi+50);
+          const prodData = await shopifyFetch('products.json?ids=' + batch.join(',') + '&limit=50&fields=id,variants,images');
+          (prodData.products || []).forEach(p => {
+            const imgById = {};
+            (p.images||[]).forEach(img => { imgById[img.id] = img.src; });
+            (p.variants||[]).forEach(v => {
+              const src = (v.image_id && imgById[v.image_id]) ? imgById[v.image_id] : (p.images&&p.images[0]&&p.images[0].src);
+              if (src) imageCache[String(v.id)] = src;
+            });
+          });
+        }
       } catch(e) {}
     }
+
     // FIX 2: Fetch transaction data for partially_paid orders to get actual paid amounts
     const txMap = {};
     const partialOrders = orders.filter(o => o.financial_status === 'partially_paid');
@@ -526,6 +538,23 @@ app.get('/api/orders/list', auth, async (req, res) => {
     const exchangeMap = {};
     db.prepare('SELECT order_id, action_type, exchange_item, reason FROM exchanges ORDER BY id ASC').all().forEach(e=>{ exchangeMap[String(e.order_id)]=e; });
 
+    // CUSTOMER NAME FIX: Batch-fetch names from Shopify, cached in customer_names table
+    const customerIds = [...new Set(orders.filter(o => o.customer&&o.customer.id).map(o => o.customer.id))];
+    const customerMap = {};
+    if (customerIds.length > 0) {
+      try { const phs3 = customerIds.map(()=>'?').join(','); db.prepare('SELECT id,name FROM customer_names WHERE id IN (' + phs3 + ')').all(...customerIds).forEach(r => { customerMap[r.id] = r.name; }); } catch(e) {}
+      const missing = customerIds.filter(id => !(id in customerMap));
+      if (missing.length > 0) {
+        try {
+          for (let ci = 0; ci < missing.length; ci += 250) {
+            const batch = missing.slice(ci, ci+250);
+            const custData = await shopifyFetch('customers.json?ids=' + batch.join(',') + '&fields=id,first_name,last_name&limit=250');
+            const cstmt = db.prepare('INSERT OR REPLACE INTO customer_names (id,name) VALUES (?,?)');
+            (custData.customers||[]).forEach(c => { const nm = [c.first_name,c.last_name].filter(Boolean).join(' ')||'-'; customerMap[c.id]=nm; cstmt.run(c.id,nm); });
+          }
+        } catch(e) {}
+      }
+    }
     const enriched = orders.map(o => {
       const awbs = (o.fulfillments||[]).flatMap(f=>f.tracking_numbers||[]).filter(Boolean);
       const awb = awbs[0] || '';
@@ -684,7 +713,7 @@ app.get('/api/orders/list', auth, async (req, res) => {
 
       return {
         id: o.id, name: o.name, date: (o.created_at||'').substring(0,10),
-        customer: o.billing_address?.name || o.billing_address?.first_name || o.shipping_address?.name || o.shipping_address?.first_name || o.customer?.first_name || (o.source_name === 'pos' ? o.note : null) || '-',
+        customer: customerMap[o.customer&&o.customer.id] || o.billing_address?.name || o.billing_address?.first_name || o.shipping_address?.name || '-',
         phone: o.billing_address?.phone || o.shipping_address?.phone || o.customer?.phone || '',
         city: o.shipping_address?.city || '',
         state: o.shipping_address?.province || '',
