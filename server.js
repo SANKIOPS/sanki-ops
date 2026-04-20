@@ -497,13 +497,15 @@ app.get('/api/orders/list', auth, async (req, res) => {
     const allVariantIds = orders.flatMap(o => (o.line_items||[]).map(i => i.variant_id).filter(Boolean));
     const imageCache = {};
     if (allVariantIds.length > 0) {
-      const uniqueIds = [...new Set(allVariantIds)];
-      const phs2 = uniqueIds.map(()=>'?').join(',');
-      db.prepare(`SELECT variant_id, image_url FROM product_images WHERE variant_id IN (${phs2})`).all(...uniqueIds.map(String)).forEach(r => {
-        imageCache[r.variant_id] = r.image_url;
-      });
+            // Fetch images from Shopify API (product_images table empty after Railway redeploy)
+      try {
+        const prodData = await shopifyFetch('products.json?limit=250&fields=id,variants,images');
+        (prodData.products || []).forEach(p => {
+          const img = p.images?.[0]?.src;
+          if (img) (p.variants || []).forEach(v => { imageCache[String(v.id)] = img; });
+        });
+      } catch(e) {}
     }
-
     // FIX 2: Fetch transaction data for partially_paid orders to get actual paid amounts
     const txMap = {};
     const partialOrders = orders.filter(o => o.financial_status === 'partially_paid');
@@ -682,7 +684,7 @@ app.get('/api/orders/list', auth, async (req, res) => {
 
       return {
         id: o.id, name: o.name, date: (o.created_at||'').substring(0,10),
-        customer: o.billing_address?.name || [o.customer?.first_name, o.customer?.last_name].filter(Boolean).join(' ') || '-',
+        customer: o.billing_address?.name || o.billing_address?.first_name || o.shipping_address?.name || o.shipping_address?.first_name || o.customer?.first_name || (o.source_name === 'pos' ? o.note : null) || '-',
         phone: o.billing_address?.phone || o.shipping_address?.phone || o.customer?.phone || '',
         city: o.shipping_address?.city || '',
         state: o.shipping_address?.province || '',
