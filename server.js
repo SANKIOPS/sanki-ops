@@ -1,4 +1,4 @@
-'use strict';
+ 'use strict';
 const express = require('express');
 const Database = require('better-sqlite3');
 const bcrypt = require('bcryptjs');
@@ -713,7 +713,7 @@ app.get('/api/orders/list', auth, async (req, res) => {
 
       return {
         id: o.id, name: o.name, date: (o.created_at||'').substring(0,10),
-        customer: customerMap[o.customer&&o.customer.id] || o.billing_address?.name || o.billing_address?.first_name || o.shipping_address?.name || o.shipping_address?.first_name || (o.source_name==='pos'?o.note:null) || '-',
+        customer: ([o.customer?.first_name, o.customer?.last_name].filter(Boolean).join(' ') || o.billing_address?.name || o.shipping_address?.name || (o.source_name==='pos'?o.note:null) || '-'),
         phone: o.billing_address?.phone || o.shipping_address?.phone || o.customer?.phone || '',
         city: o.shipping_address?.city || '',
         state: o.shipping_address?.province || '',
