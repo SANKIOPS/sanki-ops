@@ -575,21 +575,25 @@ app.get('/api/orders/list', auth, async (req, res) => {
         // Fetch customer displayNames via GraphQL (works on all Shopify plans)
     const customerIds = [...new Set(orders.filter(o=>o.customer?.id).map(o=>o.customer.id))];
     const displayNames = {};
-    if(customerIds.length > 0){
+    const gqlDomain = getSetting('shopify_domain');
+    const gqlToken = getSetting('shopify_token');
+    if(customerIds.length > 0 && gqlDomain && gqlToken){
       try{
         const idList = customerIds.slice(0,50).map(id=>'gid://shopify/Customer/'+id);
-        const gqlQuery = '{ nodes(ids: [' + idList.map(id=>'"'+id+'"').join(',') + ']) { ... on Customer { id displayName } } }';
-        const gqlResp = await fetch('https://' + domain + '/admin/api/2024-01/graphql.json', {
+        const gqlQuery = '{ nodes(ids: [' + idList.map(id=>'"'+id+'"').join(',') + ']) { ... on Customer { id firstName lastName displayName } } }';
+        const gqlResp = await fetch('https://' + gqlDomain + '/admin/api/2024-01/graphql.json', {
           method: 'POST',
-          headers: { 'X-Shopify-Access-Token': token, 'Content-Type': 'application/json' },
+          headers: { 'X-Shopify-Access-Token': gqlToken, 'Content-Type': 'application/json' },
           body: JSON.stringify({ query: gqlQuery })
         });
         if(gqlResp.ok){
           const gqlData = await gqlResp.json();
           (gqlData?.data?.nodes||[]).forEach(node=>{
-            if(node?.id && node?.displayName && node.displayName !== 'Customer'){
-              const numId = node.id.replace('gid://shopify/Customer/','');
-              displayNames[numId] = node.displayName;
+            if(node?.id){
+              const name = (node.firstName||node.lastName)
+                ? [node.firstName,node.lastName].filter(Boolean).join(' ')
+                : (node.displayName && node.displayName!=='Customer' ? node.displayName : null);
+              if(name){ const numId = node.id.replace('gid://shopify/Customer/',''); displayNames[numId]=name; }
             }
           });
         }
