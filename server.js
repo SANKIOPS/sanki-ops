@@ -531,6 +531,7 @@ app.get('/api/orders/list', auth, async (req, res) => {
         for(let i=0;i<customerIds.length;i+=50){
           const batch = customerIds.slice(i,i+50);
           const custData = await shopifyFetch('customers.json?ids='+batch.join(',')+'&fields=id,first_name,last_name,email');
+          console.log('[NAMES] resp keys:',Object.keys(custData||{}).join(','),'count:',(custData.customers||[]).length,(custData.errors?'ERR:'+JSON.stringify(custData.errors).substring(0,100):''));
           (custData.customers||[]).forEach(c=>{
             const nm=[c.first_name,c.last_name].filter(Boolean).join(' ').trim()||c.email||'';
             if(nm) displayNames[String(c.id)]=nm;
