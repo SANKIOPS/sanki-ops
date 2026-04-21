@@ -1223,12 +1223,4 @@ app.get('/api/export/orders', auth, async (req, res) => {
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
-app.get('/api/debug/customers', requireAuth, async (req,res)=>{
-  try{
-    const ids='9231437889788,9262599110908,9219689644284';
-    const data=await shopifyFetch('customers.json?ids='+ids+'&fields=id,first_name,last_name,email');
-    res.json(data);
-  }catch(e){res.json({error:e.message});}
-});
-
 app.listen(PORT, () => console.log(`SANKI OPS running on port ${PORT}`));
