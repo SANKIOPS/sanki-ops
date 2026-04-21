@@ -572,29 +572,17 @@ app.get('/api/orders/list', auth, async (req, res) => {
     const exchangeMap = {};
     db.prepare('SELECT order_id, action_type, exchange_item, reason FROM exchanges ORDER BY id ASC').all().forEach(e=>{ exchangeMap[String(e.order_id)]=e; });
 
-        // Fetch customer displayNames via GraphQL (works on all Shopify plans)
+        // Fetch customer names from Shopify Customers API (same data as Shopify Orders > Customer field)
     const customerIds = [...new Set(orders.filter(o=>o.customer?.id).map(o=>o.customer.id))];
     const displayNames = {};
-    const gqlDomain = getSetting('shopify_domain');
-    const gqlToken = getSetting('shopify_token');
-    if(customerIds.length > 0 && gqlDomain && gqlToken){
+    if(customerIds.length > 0){
       try{
-        const idList = customerIds.slice(0,50).map(id=>'gid://shopify/Customer/'+id);
-        const gqlQuery = '{ nodes(ids: [' + idList.map(id=>'"'+id+'"').join(',') + ']) { ... on Customer { id firstName lastName displayName } } }';
-        const gqlResp = await fetch('https://' + gqlDomain + '/admin/api/2024-01/graphql.json', {
-          method: 'POST',
-          headers: { 'X-Shopify-Access-Token': gqlToken, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query: gqlQuery })
-        });
-        if(gqlResp.ok){
-          const gqlData = await gqlResp.json();
-          (gqlData?.data?.nodes||[]).forEach(node=>{
-            if(node?.id){
-              const name = (node.firstName||node.lastName)
-                ? [node.firstName,node.lastName].filter(Boolean).join(' ')
-                : (node.displayName && node.displayName!=='Customer' ? node.displayName : null);
-              if(name){ const numId = node.id.replace('gid://shopify/Customer/',''); displayNames[numId]=name; }
-            }
+        for(let i=0;i<customerIds.length;i+=50){
+          const batch = customerIds.slice(i,i+50);
+          const custData = await shopifyFetch('customers.json?ids='+batch.join(',')+'&fields=id,first_name,last_name,email');
+          (custData.customers||[]).forEach(c=>{
+            const name=[c.first_name,c.last_name].filter(Boolean).join(' ').trim()||c.email||'';
+            if(name) displayNames[String(c.id)]=name;
           });
         }
       }catch(e){ /* ignore - fall back to other sources */ }
