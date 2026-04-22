@@ -533,7 +533,6 @@ app.get('/api/orders/list', auth, async (req, res) => {
         if (nm) displayNames[String(o.customer.id)] = nm;
       }
     });
-        console.log('[DIAG] order0:', orders[0] && {email:orders[0].email, phone:orders[0].phone, custKeys:Object.keys(orders[0].customer||{}), shipName:orders[0].shipping_address&&orders[0].shipping_address.name, billName:orders[0].billing_address&&orders[0].billing_address.name, custEmail:orders[0].customer&&orders[0].customer.email});
     if(customerIds.length > 0){
       try{
         for(let i=0;i<customerIds.length;i+=50){
@@ -710,7 +709,7 @@ app.get('/api/orders/list', auth, async (req, res) => {
 
       return {
         id: o.id, name: o.name, date: (o.created_at||'').substring(0,10),
-        customer: displayNames[String(o.customer&&o.customer.id)] || o.billing_address?.name || o.shipping_address?.name || o.email || o.phone || '-',
+        customer: displayNames[String(o.customer&&o.customer.id)] || o.billing_address?.name || o.shipping_address?.name || o.email || o.phone || (o.customer && o.customer.id ? 'Customer #' + o.customer.id : '-'),
         phone: o.billing_address?.phone || o.shipping_address?.phone || o.customer?.phone || '',
         city: o.shipping_address?.city || '',
         state: o.shipping_address?.province || '',
@@ -1236,38 +1235,5 @@ app.get('/api/export/orders', auth, async (req, res) => {
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
-// TEMP DEBUG: Token & PII test endpoint
-app.get('/debug-token', async (req, res) => {
-  try {
-    const domain = getSetting('shopify_domain');
-    const token = getSetting('shopify_token');
-    const tokenPreview = token ? token.substring(0,8)+'...' : 'NOT SET';
-    // Test 1: customers.json
-    const r1 = await fetch(`https://${domain}/admin/api/2024-01/customers.json?limit=1`, {headers: {'X-Shopify-Access-Token': token}});
-    const d1 = await r1.json();
-    const cust = (d1.customers||[])[0];
-    const custSummary = cust ? {id:cust.id, fn:cust.first_name, ln:cust.last_name, em:cust.email, keys:Object.keys(cust)} : 'no customers';
-    // Test 2: orders.json - check order-level email and shipping_address
-    const r3 = await fetch(`https://${domain}/admin/api/2024-01/orders.json?limit=1&status=any`, {headers: {'X-Shopify-Access-Token': token}});
-    const d3 = await r3.json();
-    const ord = (d3.orders||[])[0];
-    const ordSummary = ord ? {id:ord.id, email:ord.email, phone:ord.phone, shipName:ord.shipping_address&&ord.shipping_address.name, billName:ord.billing_address&&ord.billing_address.name, custFn:ord.customer&&ord.customer.first_name, custEm:ord.customer&&ord.customer.email, note:ord.note} : 'no orders';
-    // Test 3: shop.json
-    const r2 = await fetch(`https://${domain}/admin/api/2024-01/shop.json`, {headers: {'X-Shopify-Access-Token': token}});
-    const d2 = await r2.json();
-    res.json({tokenPreview, domain, tokenStatus: r2.status, shopName: d2.shop&&d2.shop.name, custApiStatus: r1.status, custCount:(d1.customers||[]).length, firstCust: custSummary, firstOrder: ordSummary});
-  } catch(e) { res.json({error: e.message}); }
-});
-  const d1 = await r1.json();
-    const cust = (d1.customers||[])[0];
-    const custSummary = cust ? {id:cust.id, fn:cust.first_name, ln:cust.last_name, em:cust.email} : 'no customers';
-    // Test 2: Check token by calling shop endpoint
-    const r2 = await fetch(`https://${domain}/admin/api/2024-01/shop.json`, {
-      headers: {'X-Shopify-Access-Token': token}
-    });
-    const d2 = await r2.json();
-    res.json({tokenPreview, domain, tokenStatus: r2.status, shopName: d2.shop?.name, custApiStatus: r1.status, custCount: (d1.customers||[]).length, firstCust: custSummary});
-  } catch(e) { res.json({error: e.message}); }
-});
 
 app.listen(PORT, () => console.log(`SANKI OPS running on port ${PORT}`));
