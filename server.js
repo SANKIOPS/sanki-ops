@@ -533,6 +533,7 @@ app.get('/api/orders/list', auth, async (req, res) => {
         if (nm) displayNames[String(o.customer.id)] = nm;
       }
     });
+        console.log('[DIAG] order0:', orders[0] && {email:orders[0].email, phone:orders[0].phone, custKeys:Object.keys(orders[0].customer||{}), shipName:orders[0].shipping_address&&orders[0].shipping_address.name, billName:orders[0].billing_address&&orders[0].billing_address.name, custEmail:orders[0].customer&&orders[0].customer.email});
     if(customerIds.length > 0){
       try{
         for(let i=0;i<customerIds.length;i+=50){
