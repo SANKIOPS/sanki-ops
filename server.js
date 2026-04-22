@@ -1236,18 +1236,29 @@ app.get('/api/export/orders', auth, async (req, res) => {
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
-
-// TEMP DEBUG: Token & PII test endpoint - remove after diagnosis
+// TEMP DEBUG: Token & PII test endpoint
 app.get('/debug-token', async (req, res) => {
   try {
     const domain = getSetting('shopify_domain');
     const token = getSetting('shopify_token');
     const tokenPreview = token ? token.substring(0,8)+'...' : 'NOT SET';
-    // Test 1: Basic customers call
-    const r1 = await fetch(`https://${domain}/admin/api/2024-01/customers.json?limit=2`, {
-      headers: {'X-Shopify-Access-Token': token}
-    });
+    // Test 1: customers.json
+    const r1 = await fetch(`https://${domain}/admin/api/2024-01/customers.json?limit=1`, {headers: {'X-Shopify-Access-Token': token}});
     const d1 = await r1.json();
+    const cust = (d1.customers||[])[0];
+    const custSummary = cust ? {id:cust.id, fn:cust.first_name, ln:cust.last_name, em:cust.email, keys:Object.keys(cust)} : 'no customers';
+    // Test 2: orders.json - check order-level email and shipping_address
+    const r3 = await fetch(`https://${domain}/admin/api/2024-01/orders.json?limit=1&status=any`, {headers: {'X-Shopify-Access-Token': token}});
+    const d3 = await r3.json();
+    const ord = (d3.orders||[])[0];
+    const ordSummary = ord ? {id:ord.id, email:ord.email, phone:ord.phone, shipName:ord.shipping_address&&ord.shipping_address.name, billName:ord.billing_address&&ord.billing_address.name, custFn:ord.customer&&ord.customer.first_name, custEm:ord.customer&&ord.customer.email, note:ord.note} : 'no orders';
+    // Test 3: shop.json
+    const r2 = await fetch(`https://${domain}/admin/api/2024-01/shop.json`, {headers: {'X-Shopify-Access-Token': token}});
+    const d2 = await r2.json();
+    res.json({tokenPreview, domain, tokenStatus: r2.status, shopName: d2.shop&&d2.shop.name, custApiStatus: r1.status, custCount:(d1.customers||[]).length, firstCust: custSummary, firstOrder: ordSummary});
+  } catch(e) { res.json({error: e.message}); }
+});
+  const d1 = await r1.json();
     const cust = (d1.customers||[])[0];
     const custSummary = cust ? {id:cust.id, fn:cust.first_name, ln:cust.last_name, em:cust.email} : 'no customers';
     // Test 2: Check token by calling shop endpoint
