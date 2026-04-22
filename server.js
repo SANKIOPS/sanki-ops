@@ -526,6 +526,13 @@ app.get('/api/orders/list', auth, async (req, res) => {
     // Fetch customer names from Shopify Customers API (handles PII redaction on Basic plan)
     const customerIds = [...new Set(orders.filter(o=>o.customer&&o.customer.id).map(o=>String(o.customer.id)))];
     const displayNames = {};
+    // Build customer names from embedded order data (available via read_orders scope, no extra API call needed)
+    orders.forEach(o => {
+      if (o.customer && o.customer.id) {
+        const nm = [o.customer.first_name, o.customer.last_name].filter(Boolean).join(' ').trim() || o.customer.email || '';
+        if (nm) displayNames[String(o.customer.id)] = nm;
+      }
+    });
     if(customerIds.length > 0){
       try{
         for(let i=0;i<customerIds.length;i+=50){
@@ -702,8 +709,7 @@ app.get('/api/orders/list', auth, async (req, res) => {
 
       return {
         id: o.id, name: o.name, date: (o.created_at||'').substring(0,10),
-        customer: displayNames[String(o.customer&&o.customer.id)] || cached?.customer_name || o.billing_address?.name || o.shipping_address?.name || o.customer?.first_name || '-',
-        _debug_cid: o.customer&&o.customer.id,
+        customer: displayNames[String(o.customer&&o.customer.id)] || o.billing_address?.name || o.shipping_address?.name || '-',
         phone: o.billing_address?.phone || o.shipping_address?.phone || o.customer?.phone || '',
         city: o.shipping_address?.city || '',
         state: o.shipping_address?.province || '',
