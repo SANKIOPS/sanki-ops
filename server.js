@@ -1236,4 +1236,27 @@ app.get('/api/export/orders', auth, async (req, res) => {
   } catch(e) { res.status(500).json({ error: e.message }); }
 });
 
+
+// TEMP DEBUG: Token & PII test endpoint - remove after diagnosis
+app.get('/debug-token', async (req, res) => {
+  try {
+    const domain = getSetting('shopify_domain');
+    const token = getSetting('shopify_token');
+    const tokenPreview = token ? token.substring(0,8)+'...' : 'NOT SET';
+    // Test 1: Basic customers call
+    const r1 = await fetch(`https://${domain}/admin/api/2024-01/customers.json?limit=2`, {
+      headers: {'X-Shopify-Access-Token': token}
+    });
+    const d1 = await r1.json();
+    const cust = (d1.customers||[])[0];
+    const custSummary = cust ? {id:cust.id, fn:cust.first_name, ln:cust.last_name, em:cust.email} : 'no customers';
+    // Test 2: Check token by calling shop endpoint
+    const r2 = await fetch(`https://${domain}/admin/api/2024-01/shop.json`, {
+      headers: {'X-Shopify-Access-Token': token}
+    });
+    const d2 = await r2.json();
+    res.json({tokenPreview, domain, tokenStatus: r2.status, shopName: d2.shop?.name, custApiStatus: r1.status, custCount: (d1.customers||[]).length, firstCust: custSummary});
+  } catch(e) { res.json({error: e.message}); }
+});
+
 app.listen(PORT, () => console.log(`SANKI OPS running on port ${PORT}`));
