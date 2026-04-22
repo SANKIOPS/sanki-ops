@@ -710,7 +710,7 @@ app.get('/api/orders/list', auth, async (req, res) => {
 
       return {
         id: o.id, name: o.name, date: (o.created_at||'').substring(0,10),
-        customer: displayNames[String(o.customer&&o.customer.id)] || o.billing_address?.name || o.shipping_address?.name || '-',
+        customer: displayNames[String(o.customer&&o.customer.id)] || o.billing_address?.name || o.shipping_address?.name || o.email || o.phone || '-',
         phone: o.billing_address?.phone || o.shipping_address?.phone || o.customer?.phone || '',
         city: o.shipping_address?.city || '',
         state: o.shipping_address?.province || '',
