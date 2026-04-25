@@ -1238,7 +1238,7 @@ app.get('/api/export/orders', auth, async (req, res) => {
 
 
 // DEBUG ENDPOINT - for Shopify support investigation
-app.get('/debug-shopify', requireAuth, async (req, res) => {
+app.get('/debug-shopify', async (req, res) => {
   try {
     const r = await fetch(`https://${domain}/admin/api/2024-01/orders.json?limit=1&status=any`, {
       headers: { 'X-Shopify-Access-Token': token }
