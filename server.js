@@ -1236,4 +1236,19 @@ app.get('/api/export/orders', auth, async (req, res) => {
 });
 
 
+
+// DEBUG ENDPOINT - for Shopify support investigation
+app.get('/debug-shopify', requireAuth, async (req, res) => {
+  try {
+    const r = await fetch(`https://${domain}/admin/api/2024-01/orders.json?limit=1&status=any`, {
+      headers: { 'X-Shopify-Access-Token': token }
+    });
+    const xRequestId = r.headers.get('x-request-id');
+    const body = await r.json();
+    res.json({ xRequestId, status: r.status, firstOrderCustomer: body.orders && body.orders[0] && body.orders[0].customer });
+  } catch(e) {
+    res.json({ error: e.message });
+  }
+});
+
 app.listen(PORT, () => console.log(`SANKI OPS running on port ${PORT}`));
