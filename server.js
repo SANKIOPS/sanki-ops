@@ -1240,12 +1240,14 @@ app.get('/api/export/orders', auth, async (req, res) => {
 // DEBUG ENDPOINT - for Shopify support investigation
 app.get('/debug-shopify', async (req, res) => {
   try {
-    const r = await fetch(`https://${domain}/admin/api/2024-01/orders.json?limit=1&status=any`, {
-      headers: { 'X-Shopify-Access-Token': token }
+    const shopDomain = process.env.SHOPIFY_DOMAIN;
+    const shopToken = process.env.SHOPIFY_TOKEN;
+    const r = await fetch(`https://${shopDomain}/admin/api/2024-01/orders.json?limit=1&status=any`, {
+      headers: { 'X-Shopify-Access-Token': shopToken }
     });
     const xRequestId = r.headers.get('x-request-id');
     const body = await r.json();
-    res.json({ xRequestId, status: r.status, firstOrderCustomer: body.orders && body.orders[0] && body.orders[0].customer });
+    res.json({ xRequestId, status: r.status, shopDomain, firstOrderCustomer: body.orders && body.orders[0] && body.orders[0].customer });
   } catch(e) {
     res.json({ error: e.message });
   }
